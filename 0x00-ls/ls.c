@@ -125,7 +125,7 @@ int ls(args_t *args)
         }
     }
 
-    if (files_i == 0 && dirs->size == 0)
+    if (files_i == 0 && dirs->size == 0 && args->err != FILE_ERR)
     {
         lstat(".", &(files[files_i].sb));
         files[files_i].name = ".";
@@ -135,6 +135,7 @@ int ls(args_t *args)
         args->opt.print_dir_name = 1;
     print_files(args, files, files_i);
     print_dirs(args, dirs);
+    free(files);
 
     return (EXIT_SUCCESS);
 }
@@ -152,12 +153,10 @@ void print_files(args_t *args, container_t *files, int size)
     int files_i;
     char *separator = args->opt.put_newline ? "\n" : "\t";
 
-    printf("Sorting files\n");
     for (files_i = 0; files_i < size; files_i++)
     {
         printf("%s%s", files[files_i].name, separator);
     }
-    free(files);
 }
 
 
@@ -194,10 +193,12 @@ void read_files(args_t *args, node_t *dir, int size)
     DIR *open_dir;
     char buf[BUFSIZ];
     struct dirent *read;
-    container_t *files = malloc((size) * sizeof(container_t));
-    /* queue_t *dirs = create_queue(); */
+    container_t *files = NULL;
     int temp;
+    /* queue_t *dirs = create_queue(); */
 
+    size = size * sizeof(container_t);
+    files = malloc((size) * sizeof(container_t));
     if (!files)
         exit(EXIT_FAILURE);
 
@@ -214,11 +215,13 @@ void read_files(args_t *args, node_t *dir, int size)
             printf("%s:\n", dir->dir.name);
         while ((read = readdir(open_dir)) != NULL)
         {
-            if (cur_size == size)
+            if (cur_size * (int)sizeof(container_t) == size)
             {
                 files = _realloc(files, size, size * 2);
                 size *= 2;
             }
+            if (!list_hidden(args, read->d_name))
+                continue;
             files[cur_size].name = _strdup(read->d_name);
             temp = _strlen(dir->dir.name);      /* handles extra '/' at the end of args*/
             if (dir->dir.name[temp - 1] == '/')
@@ -234,7 +237,49 @@ void read_files(args_t *args, node_t *dir, int size)
 
         }
         print_files(args, files, cur_size);
+        closedir(open_dir);
+        free_arr(files, cur_size);
     }
+}
+
+
+/**
+ * list_hidden - function for -a and -A options
+ * @args: - args, where options are stored
+ * @file_name: file name
+ * Return: 1 if show it, 0 hide it
+ */
+int list_hidden(args_t *args, char *file_name)
+{
+    if (!args->opt.show_cur_and_parent)
+    {
+        if (!_strcmp(file_name, ".") || !_strcmp(file_name, ".."))
+            return (0);
+    }
+    if (!args->opt.show_hidden)
+    {
+        if (file_name[0] == '.')
+            return (0);
+    }
+    return (1);
+}
+
+
+/**
+ * free_arr - frees array of files
+ * @files: - files array
+ * @size: size of the array
+ * Return: Void
+ */
+void free_arr(container_t *files, int size)
+{
+    int files_i;
+
+    for (files_i = 0; files_i < size; files_i++)
+    {
+        free(files[files_i].name);
+    }
+    free(files);
 }
 
 
