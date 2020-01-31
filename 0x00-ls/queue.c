@@ -60,7 +60,6 @@ void free_queue(queue_t **q)
 		return;
 	while (head)
 	{
-        printf("%s\n", head->dir.name);
         prev = head->next;
         free(head);
 		head = prev;
