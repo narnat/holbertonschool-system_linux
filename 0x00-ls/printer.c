@@ -9,15 +9,17 @@
  */
 void print_files(args_t *args, container_t *files, int size)
 {
-	int files_i;
+	int files_i, flag = 0;
 	char *separator = args->opt.put_newline ? "\n" : "\t";
 
 	for (files_i = 0; files_i < size; files_i++)
 	{
+		flag = 1;
 		/* print_info(args, &(files[files_i])); */
 		printf("%s%s", files[files_i].name, separator);
 	}
-	printf("\n");
+	if (flag)
+		printf("\n");
 }
 
 
