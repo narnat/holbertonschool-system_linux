@@ -69,20 +69,35 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 }
 
 /**
- * _strstr - locates a substring
- * @haystack: string
- * @needle: prefix
+ * _strchr - locates a character in a string
+ * @s: string
+ * @c: character
  *
  * Return: returns a pointer
  */
-char *_strstr(char *haystack, char *needle)
+
+char *_strchr(char *s, char c)
 {
-	while (*haystack)
+	while (*s && *s != c)
 	{
-		if (_strcmp(haystack, needle))
-			return (haystack);
-		haystack++;
+		s++;
 	}
+	if (*s == c)
+		return (s);
+	return (NULL);
+}
+
+/**
+ * _strlen - prints a length of a string
+ * @s: takes string
+ *
+ * Return: the length
+ */
+
+int _strlen(char *s)
+{
+	if (*s)
+		return (1 + _strlen(s + 1));
 	return (0);
 }
 
@@ -91,17 +106,16 @@ char *_strstr(char *haystack, char *needle)
  * @s1: first string
  * @s2: second string
  *
- * Return: returns true or false
+ * Return: returns the differences of ASCII characters
  */
 
 int _strcmp(char *s1, char *s2)
 {
-	while (*s1 && *s2)
-	{
-		if (*s1 != *s2)
-			return (0);
-		s1++;
-		s2++;
-	}
-	return (1);
+	int diff, i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] && s2[i])
+		i++;
+	diff = s1[i] - s2[i];
+	return (diff);
 }
