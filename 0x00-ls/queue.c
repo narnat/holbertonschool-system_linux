@@ -56,8 +56,6 @@ void free_queue(queue_t **q)
 
 	head = (*q)->first;
 
-	if (!head)
-		return;
 	while (head)
 	{
 		prev = head->next;

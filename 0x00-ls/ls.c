@@ -96,7 +96,7 @@ void read_files(args_t *args, node_t *dir, int size)
 		args->err = P_ERR, args->dir_name = dir->dir.name, free(files), error(args);
 	else
 	{
-		if (args->opt.print_dir_name)
+		if (args->opt.print_dir_name || args->err > 0)
 			printf("%s:\n", dir->dir.name);
 		while ((read = readdir(open_dir)) != NULL)
 		{
