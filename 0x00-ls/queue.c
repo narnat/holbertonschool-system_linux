@@ -6,15 +6,15 @@
 */
 queue_t *create_queue()
 {
-    queue_t *q = malloc(sizeof(queue_t));
+	queue_t *q = malloc(sizeof(queue_t));
 
-    if (!q)
-        exit(EXIT_FAILURE);
+	if (!q)
+		exit(EXIT_FAILURE);
 
-    q->first = q->last = NULL;
-    q->size = 0;
+	q->first = q->last = NULL;
+	q->size = 0;
 
-    return q;
+	return (q);
 }
 
 /**
@@ -24,23 +24,23 @@ queue_t *create_queue()
  */
 void en_queue(queue_t *queue, container_t dir)
 {
-    node_t *temp = malloc(sizeof(node_t));
+	node_t *temp = malloc(sizeof(node_t));
 
-    if (!temp)
-        exit(EXIT_FAILURE);
+	if (!temp)
+		exit(EXIT_FAILURE);
 
-    temp->dir = dir;
-    temp->next = NULL;
-    queue->size++;
-    if (queue->last == NULL)
-    {
-        queue->first = queue->last = temp;
-    }
-    else
-    {
-        queue->last->next = temp;
-        queue->last = temp;
-    }
+	temp->dir = dir;
+	temp->next = NULL;
+	queue->size++;
+	if (queue->last == NULL)
+	{
+		queue->first = queue->last = temp;
+	}
+	else
+	{
+		queue->last->next = temp;
+		queue->last = temp;
+	}
 }
 
 
@@ -52,19 +52,19 @@ void en_queue(queue_t *queue, container_t dir)
 void free_queue(queue_t **q)
 {
 	node_t *prev;
-    node_t *head;
+	node_t *head;
 
-    head = (*q)->first;
+	head = (*q)->first;
 
-    if (!head)
+	if (!head)
 		return;
 	while (head)
 	{
-        prev = head->next;
-        free(head);
+		prev = head->next;
+		free(head);
 		head = prev;
 	}
 
-    free(*q);
-    *q = NULL;
+	free(*q);
+	*q = NULL;
 }

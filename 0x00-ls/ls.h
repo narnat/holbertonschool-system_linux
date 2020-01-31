@@ -15,18 +15,23 @@
  * enum err_codes - error codes
  * @NO_ERR: No error code
  * @OPT_ERR: Operation error code
+ * @FILE_ERR: No such file or dir error
+ * @PERM_ERR: Permission error
  */
 enum err_codes
 {
 	NO_ERR,
-    OPT_ERR,
-    FILE_ERR,
-    PERM_ERR
+	OPT_ERR,
+	FILE_ERR,
+	PERM_ERR
 };
 
 /**
  * enum ls_codes - ls exit status codes
-*/
+ * @LS_OK: exit code 0, normal termination
+ * @LS_MINOR: exit code 1, minor problems
+ * @LS_SERIOUS: exit code 2, serious problem
+ */
 enum ls_codes
 {
 	LS_OK,
@@ -37,7 +42,7 @@ enum ls_codes
 typedef struct stat stat_t;
 
 /**
- * struct options - options struct for ls
+ * struct options_s - options struct for ls
  * @show_hidden: -a or -A option
  * @show_cur_and_parent: -a option
  * @put_newline: -l option or -1 option
@@ -47,7 +52,6 @@ typedef struct stat stat_t;
  * @sort_size: -S option
  * @sort_time: -t option
  * @print_dir_name: prints names of dirs
- *
  * Description: options struct
  */
 typedef struct options_s
@@ -62,11 +66,11 @@ typedef struct options_s
 	unsigned int sort_size				 :1;
 	unsigned int sort_time				 :1;
 
-    unsigned int print_dir_name          :1;
+	unsigned int print_dir_name			 :1;
 } opts_t;
 
 /**
- * struct arguments - Values to be accessed by various functions
+ * struct arguments_s - Values to be accessed by various functions
  * @argc: counts number of lines
  * @argv: Name of the executable
  * @opt: input line
@@ -81,12 +85,12 @@ typedef struct arguments_s
 	opts_t opt;
 	enum err_codes err;
 	int inv;
-    char *dir_name;
+	char *dir_name;
 } args_t;
 
 
 /**
- * struct container - Container struct to store info about files and its name
+ * struct container_s - Container struct to store info about files and its name
  * @name: name of the file
  * @sb: info about file
 */
@@ -106,7 +110,7 @@ typedef struct container_s
  */
 typedef struct node_s
 {
-    container_t dir;
+	container_t dir;
 	struct node_s *next;
 } node_t;
 
@@ -118,9 +122,9 @@ typedef struct node_s
  */
 typedef struct queue_s
 {
-    int size;
-    node_t *first;
-    node_t *last;
+	int size;
+	node_t *first;
+	node_t *last;
 } queue_t;
 
 /* Queue functions functions */
@@ -137,6 +141,9 @@ void print_dirs(args_t *args, queue_t *dirs);
 void read_files(args_t *args, node_t *dir, int size);
 void free_arr(container_t *files, int size);
 int list_hidden(args_t *args, char *file_name);
+
+void print_info(args_t *args, container_t *file);
+char get_file_type(stat_t sb);
 
 char *_strdup(char *str);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
