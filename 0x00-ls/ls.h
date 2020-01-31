@@ -135,10 +135,13 @@ void print_args(args_t *args);
 void print_files(args_t *args, container_t *files, int size);
 void print_dirs(args_t *args, queue_t *dirs);
 void read_files(args_t *args, node_t *dir, int size);
+void free_arr(container_t *files, int size);
+int list_hidden(args_t *args, char *file_name);
 
 char *_strdup(char *str);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char *_strchr(char *s, char c);
 int _strlen(char *s);
+int _strcmp(char *s1, char *s2);
 
 #endif /* LS_H */
