@@ -93,7 +93,7 @@ void read_files(args_t *args, node_t *dir, int size)
 
 	open_dir = opendir(dir->dir.name);
 	if (!open_dir)
-		args->err = PERM_ERR, args->dir_name = dir->dir.name, error(args);
+		args->err = P_ERR, args->dir_name = dir->dir.name, free(files), error(args);
 	else
 	{
 		if (args->opt.print_dir_name)

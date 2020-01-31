@@ -31,7 +31,7 @@ void error(args_t *args)
 	if (args->err == OPT_ERR)
 	{
 		sprintf(buf, "invalid option -- '%c'\nTry", args->argv[args->inv][1]);
-		fprintf(stderr, "%s ls --help for more information.\n", buf);
+		fprintf(stderr, "%s 'ls --help' for more information.\n", buf);
 		exit(LS_SERIOUS);
 	}
 	if (args->err == FILE_ERR)
@@ -39,9 +39,9 @@ void error(args_t *args)
 		sprintf(buf, "cannot access %s", args->argv[args->inv]);
 		perror(buf);
 	}
-	if (args->err == PERM_ERR)
+	if (args->err == P_ERR)
 	{
 		sprintf(buf, "cannot open directory %s", args->dir_name);
-		perror(buf);
+		args->err = LS_SERIOUS, perror(buf);
 	}
 }

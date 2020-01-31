@@ -16,14 +16,14 @@
  * @NO_ERR: No error code
  * @OPT_ERR: Operation error code
  * @FILE_ERR: No such file or dir error
- * @PERM_ERR: Permission error
+ * @P_ERR: Permission error
  */
 enum err_codes
 {
 	NO_ERR,
 	OPT_ERR,
 	FILE_ERR,
-	PERM_ERR
+	P_ERR
 };
 
 /**
