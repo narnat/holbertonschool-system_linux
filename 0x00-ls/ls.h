@@ -77,6 +77,8 @@ typedef struct options_s
  * @err: err code
  * @inv: invalid command or option
  * @dir_name: dir name for error
+ * @n_files: number of files passed as argument
+ * @n_dirs: number of dirs passed as argument
  */
 typedef struct arguments_s
 {
@@ -86,6 +88,8 @@ typedef struct arguments_s
 	enum err_codes err;
 	int inv;
 	char *dir_name;
+	int n_files;
+	int n_dirs;
 } args_t;
 
 
@@ -138,9 +142,10 @@ void set_opts(args_t *args);
 void print_args(args_t *args);
 void print_files(args_t *args, container_t *files, int size);
 void print_dirs(args_t *args, queue_t *dirs);
-void read_files(args_t *args, node_t *dir, int size);
+void read_files(args_t *args, node_t *dir, int size, uint idx);
 void free_arr(container_t *files, int size);
 int list_hidden(args_t *args, char *file_name);
+void print_dir_name(args_t *args, char *name, uint idx);
 
 void print_info(args_t *args, container_t *file);
 char get_file_type(stat_t sb);

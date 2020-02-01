@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
 	args.err = NO_ERR;
 	args.inv = -1; /* Combine inv and dir_name */
 	args.dir_name = NULL;
+	args.n_files = 0;
+	args.n_dirs = 0;
 
 	set_opts(&args);
 	ls(&args);
@@ -37,7 +39,6 @@ int ls(args_t *args)
 
 	if (!files)
 		return (EXIT_FAILURE);
-
 	for (argv_i = 1; argv_i < args->argc; argv_i++)
 	{
 		if (args->argv[argv_i][0] == '-' && args->argv[argv_i][1])
@@ -63,8 +64,7 @@ int ls(args_t *args)
 		files[files_i].name = ".";
 		en_queue(dirs, files[files_i]);
 	}
-	if (files_i + dirs->size > 1)
-		args->opt.print_dir_name = 1;
+	args->n_files = files_i, args->n_dirs = dirs->size;
 	print_files(args, files, files_i);
 	print_dirs(args, dirs);
 	free(files);
@@ -77,8 +77,9 @@ int ls(args_t *args)
  * @args: global arguments
  * @dir: One directory, which needs to be opened
  * @size: initial size of array
+ * @idx: Index of dir for printing
  */
-void read_files(args_t *args, node_t *dir, int size)
+void read_files(args_t *args, node_t *dir, int size, uint idx)
 {
 	int cur_size = 0, temp;
 	DIR *open_dir;
@@ -96,8 +97,7 @@ void read_files(args_t *args, node_t *dir, int size)
 		args->err = P_ERR, args->dir_name = dir->dir.name, free(files), error(args);
 	else
 	{
-		if (args->opt.print_dir_name || args->err > 0)
-			printf("%s:\n", dir->dir.name);
+		print_dir_name(args, dir->dir.name, idx);
 		while ((read = readdir(open_dir)) != NULL)
 		{
 			if (cur_size * (int)sizeof(container_t) == size)
