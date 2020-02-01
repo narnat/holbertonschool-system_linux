@@ -94,11 +94,17 @@ char *_strchr(char *s, char c)
  * Return: the length
  */
 
-int _strlen(char *s)
+size_t _strlen(char *s)
 {
-	if (*s)
-		return (1 + _strlen(s + 1));
-	return (0);
+	size_t count;
+
+	count = 0;
+	while (*s)
+	{
+		count++;
+		s++;
+	}
+	return (count);
 }
 
 /**

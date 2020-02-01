@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/sysmacros.h>
+#include <pwd.h>
+#include <grp.h>
+#include <time.h>
+
 
 /**
  * enum err_codes - error codes
@@ -140,20 +144,24 @@ int ls(args_t *args);
 void error(args_t *args);
 void set_opts(args_t *args);
 void print_args(args_t *args);
-void print_files(args_t *args, container_t *files, int size);
+void print_files(args_t *args, container_t *files, int size, size_t *width);
 void print_dirs(args_t *args, queue_t *dirs);
 void read_files(args_t *args, node_t *dir, int size, uint idx);
 void free_arr(container_t *files, int size);
 int list_hidden(args_t *args, char *file_name);
 void print_dir_name(args_t *args, char *name, uint idx);
 
-void print_info(args_t *args, container_t *file);
+void print_info(args_t *args, container_t *file, size_t *width);
 char get_file_type(stat_t sb);
+void get_file_permissions(stat_t sb, char *perms);
+void get_info_width(size_t *width, stat_t sb);
+size_t number_width(size_t n);
+size_t max(size_t n1, size_t n2);
 
 char *_strdup(char *str);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char *_strchr(char *s, char c);
-int _strlen(char *s);
+size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
 
 #endif /* LS_H */

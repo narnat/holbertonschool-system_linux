@@ -50,19 +50,55 @@ void set_opts(args_t *args)
 }
 
 /**
+ * get_file_permissions - gets file permissions
+ * @sb: file info struct
+ * @perms: permissions char array
+ */
+void get_file_permissions(stat_t sb, char *perms)
+{
+	if (sb.st_mode & S_IRUSR)
+		perms[0] = 'r';
+	if (sb.st_mode & S_IWUSR)
+		perms[1] = 'w';
+	if (sb.st_mode & S_IXUSR)
+		perms[2] = 'x';
+	if (sb.st_mode & S_IRGRP)
+		perms[3] = 'r';
+	if (sb.st_mode & S_IWGRP)
+		perms[4] = 'w';
+	if (sb.st_mode & S_IXGRP)
+		perms[5] = 'x';
+	if (sb.st_mode & S_IROTH)
+		perms[6] = 'r';
+	if (sb.st_mode & S_IWOTH)
+		perms[7] = 'w';
+	if (sb.st_mode & S_IXOTH)
+		perms[8] = 'x';
+}
+
+/**
  * print_info - -l option of ls
  * @args: args struct with options
  * @file: file info
+ * @width: width array
  */
-void print_info(args_t *args, container_t *file)
+void print_info(args_t *args, container_t *file, size_t *width)
 {
 	char permissions[11] = "----------\0";
+	char *time = NULL;
 
 	if (!args->opt.show_info)
 		return;
 	permissions[0] = get_file_type(file->sb);
-	printf("%s	  ", permissions);
-
+	get_file_permissions(file->sb, &permissions[1]);
+	printf("%s", permissions);
+	printf(" %-*ld", (int)width[0], (long) file->sb.st_nlink);
+	printf(" %-*s", (int)width[1], getpwuid(file->sb.st_uid)->pw_name);
+	printf(" %-*s", (int)width[2], getgrgid(file->sb.st_gid)->gr_name);
+	printf(" %*ld", (int)width[3], (long) file->sb.st_size);
+	time = ctime(&(file->sb.st_mtime));
+	time[16] = '\0'; /*24 is last*/
+	printf(" %s ", time);
 }
 
 

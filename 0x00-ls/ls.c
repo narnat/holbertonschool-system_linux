@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 int ls(args_t *args)
 {
 	int files_i = 0, argv_i;
+	size_t width[4] = {0};
 	queue_t *dirs = create_queue();
 	container_t *files = malloc((args->argc) * sizeof(container_t));
 
@@ -54,6 +55,7 @@ int ls(args_t *args)
 		}
 		else
 		{
+			get_info_width(width, files[files_i].sb);
 			files[files_i].name = args->argv[argv_i], files_i++;
 		}
 	}
@@ -65,7 +67,7 @@ int ls(args_t *args)
 		en_queue(dirs, files[files_i]);
 	}
 	args->n_files = files_i, args->n_dirs = dirs->size;
-	print_files(args, files, files_i);
+	print_files(args, files, files_i, width);
 	print_dirs(args, dirs);
 	free(files);
 
@@ -86,6 +88,7 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 	char buf[BUFSIZ];
 	struct dirent *read;
 	container_t *files = NULL;
+	size_t width[4] = {0};
 
 	size = size * sizeof(container_t);
 	files = malloc((size) * sizeof(container_t));
@@ -109,15 +112,14 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 			}
 			if (!list_hidden(args, read->d_name))
 				continue;
-			files[cur_size].name = _strdup(read->d_name);
-			temp = _strlen(dir->dir.name);	   /* handles extra '/' at the end of args*/
+			files[cur_size].name = _strdup(read->d_name), temp = _strlen(dir->dir.name);
 			if (dir->dir.name[temp - 1] == '/')
 				dir->dir.name[temp - 1] = '\0';
 			sprintf(buf, "%s/%s", dir->dir.name, read->d_name);
 			lstat(buf, &(files[cur_size].sb));
-			cur_size++;
+			get_info_width(width, files[cur_size].sb), cur_size++;
 		}
-		print_files(args, files, cur_size);
+		print_files(args, files, cur_size, width);
 		closedir(open_dir);
 		free_arr(files, cur_size);
 	}
