@@ -15,7 +15,7 @@ void print_files(args_t *args, container_t *files, int size)
 	for (files_i = 0; files_i < size; files_i++)
 	{
 		flag = 1;
-		/* print_info(args, &(files[files_i])); */
+		print_info(args, &(files[files_i]));
 		printf("%s%s", files[files_i].name, separator);
 	}
 	if (flag && !args->opt.put_newline)
@@ -54,8 +54,10 @@ void print_dirs(args_t *args, queue_t *dirs)
 */
 void print_dir_name(args_t *args, char *name, uint idx)
 {
-	if ((idx != 0) || (idx == 0 && args->n_files > 0))
+	if (((idx != 0) || (idx == 0 && args->n_files > 0)) && errno != EACCES)
 	{
+		if (errno == EACCES)
+			errno = 0;
 		printf("\n");
 	}
 	if (args->err > 0 || args->n_files + args->n_dirs > 1)

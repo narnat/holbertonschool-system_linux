@@ -94,7 +94,10 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 
 	open_dir = opendir(dir->dir.name);
 	if (!open_dir)
-		args->err = P_ERR, args->dir_name = dir->dir.name, free(files), error(args);
+	{
+		args->err = P_ERR, args->dir_name = dir->dir.name, free(files);
+		printf("%s", idx == 0 && args->n_files ? "\n" : ""), error(args);
+	}
 	else
 	{
 		print_dir_name(args, dir->dir.name, idx);
@@ -102,8 +105,7 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 		{
 			if (cur_size * (int)sizeof(container_t) == size)
 			{
-				files = _realloc(files, size, size * 2);
-				size *= 2;
+				files = _realloc(files, size, size * 2), size *= 2;
 			}
 			if (!list_hidden(args, read->d_name))
 				continue;
