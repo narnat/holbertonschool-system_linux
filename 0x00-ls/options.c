@@ -86,6 +86,8 @@ void print_info(args_t *args, container_t *file, size_t *width)
 {
 	char permissions[11] = "----------\0";
 	char *time = NULL;
+	struct passwd *uid = getpwuid(file->sb.st_uid);
+	struct group *gid = getgrgid(file->sb.st_gid);
 
 	if (!args->opt.show_info)
 		return;
@@ -93,8 +95,21 @@ void print_info(args_t *args, container_t *file, size_t *width)
 	get_file_permissions(file->sb, &permissions[1]);
 	printf("%s", permissions);
 	printf(" %-*ld", (int)width[0], (long) file->sb.st_nlink);
-	printf(" %-*s", (int)width[1], getpwuid(file->sb.st_uid)->pw_name);
-	printf(" %-*s", (int)width[2], getgrgid(file->sb.st_gid)->gr_name);
+
+	if (uid)
+		printf(" %-*s", (int)width[1], uid->pw_name);
+	else
+	{
+		printf(" %*u", (int)width[1], file->sb.st_uid);
+	}
+
+	if (gid)
+		printf(" %-*s", (int)width[2], gid->gr_name);
+	else
+	{
+		printf(" %*u", (int)width[2], file->sb.st_gid);
+	}
+
 	printf(" %*ld", (int)width[3], (long) file->sb.st_size);
 	time = ctime(&(file->sb.st_mtime));
 	time[16] = '\0'; /*24 is last*/

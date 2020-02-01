@@ -1,6 +1,24 @@
 #include "ls.h"
 
 /**
+ * print_link_src - prints source of the symlink
+ * @args: arguments
+ * @file: file struct
+ * Return: Void
+ */
+void print_link_src(args_t *args, container_t *file)
+{
+	char buf[BUFSIZ] = {0};
+
+	if (args->opt.show_info && (file->sb.st_mode & S_IFMT) == S_IFLNK)
+	{
+		readlink(file->name, buf, BUFSIZ);
+		printf(" -> %s", buf);
+	}
+}
+
+
+/**
  * print_files - prints files in sorted order and frees
  * @args: arguments
  * @files: Array of files
@@ -17,7 +35,9 @@ void print_files(args_t *args, container_t *files, int size, size_t *width)
 	{
 		flag = 1;
 		print_info(args, &(files[files_i]), width);
-		printf("%s%s", files[files_i].name, separator);
+		printf("%s", files[files_i].name);
+		print_link_src(args, &files[files_i]);
+		printf("%s", separator);
 	}
 	if (flag && !args->opt.put_newline)
 		printf("\n");
@@ -75,9 +95,9 @@ void print_dir_name(args_t *args, char *name, uint idx)
 void get_info_width(size_t *width, stat_t sb)
 {
 	width[0] = max(width[0], number_width(sb.st_nlink));
-	width[1] = max(width[1], _strlen(getpwuid(sb.st_uid) ?
-									 getpwuid(sb.st_uid)->pw_name : ""));
-	width[2] = max(width[2], _strlen(getgrgid(sb.st_gid) ?
-									 getgrgid(sb.st_gid)->gr_name : ""));
+	width[1] = max(width[1], getpwuid(sb.st_uid)
+				   ? _strlen(getpwuid(sb.st_uid)->pw_name) : number_width(sb.st_uid));
+	width[2] = max(width[2], getgrgid(sb.st_gid)
+				   ? _strlen(getgrgid(sb.st_gid)->gr_name) : number_width(sb.st_gid));
 	width[3] = max(width[3], number_width(sb.st_size));
 }
