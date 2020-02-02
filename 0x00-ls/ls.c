@@ -30,17 +30,16 @@ int main(int argc, char *argv[])
 /**
  * ls - custom ls function
  * @args: arguments
- * Return: EXIT_FAILURE or EXIT_SUCCESS
+ * Return: Void
  */
-int ls(args_t *args)
+void ls(args_t *args)
 {
-	int files_i = 0, argv_i;
+	int files_i = 0, argv_i, dir_size = 0;
 	size_t width[4] = {0};
-	queue_t *dirs = create_queue();
 	container_t *files = malloc((args->argc) * sizeof(container_t));
 
 	if (!files)
-		return (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	for (argv_i = 1; argv_i < args->argc; argv_i++)
 	{
 		if (args->argv[argv_i][0] == '-' && args->argv[argv_i][1])
@@ -52,27 +51,47 @@ int ls(args_t *args)
 		else if ((files[files_i].sb.st_mode & S_IFMT) == S_IFDIR)
 		{
 			files[files_i].name = args->argv[argv_i];
-			en_queue(dirs, files[files_i]);
+			files_i++, dir_size++;
 		}
 		else
 		{
-			get_info_width(width, files[files_i].sb);
+			get_info_width(width, files[files_i].sb);/*don't call if file is dir*/
 			files[files_i].name = args->argv[argv_i], files_i++;
 		}
 	}
 
-	if (files_i == 0 && dirs->size == 0 && args->err != FILE_ERR)
+	if (files_i == 0 && dir_size == 0 && args->err != FILE_ERR)
 	{
 		lstat(".", &(files[files_i].sb));
-		files[files_i].name = ".";
-		en_queue(dirs, files[files_i]);
+		files[files_i].name = ".", files_i++;
 	}
-	args->n_files = files_i, args->n_dirs = dirs->size;
+	args->n_files = files_i, args->n_dirs = dir_size;
 	print_files(args, files, files_i, width);
-	print_dirs(args, dirs);
+	extract_dirs(args, files, files_i);
 	free(files);
+}
 
-	return (EXIT_SUCCESS);
+
+/**
+ * extract_dirs - custom ls function
+ * @args: arguments
+ * @files: Files
+ * @size: size of files
+ * Return: Void
+ */
+void extract_dirs(args_t *args, container_t *files, int size)
+{
+	int files_i;
+	queue_t *dirs = create_queue();
+
+	for (files_i = 0; files_i < size; files_i++)
+	{
+		if ((files[files_i].sb.st_mode & S_IFMT) == S_IFDIR)
+		{
+			en_queue(dirs, files[files_i]);
+		}
+	}
+	print_dirs(args, dirs);
 }
 
 /**
@@ -95,12 +114,12 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 	files = malloc((size) * sizeof(container_t));
 	if (!files)
 		exit(EXIT_FAILURE);
-
 	open_dir = opendir(dir->dir.name);
 	if (!open_dir)
 	{
 		args->err = P_ERR, args->dir_name = dir->dir.name, free(files);
-		printf("%s", idx == 0 && args->n_files ? "\n" : ""), error(args);
+		printf("%s", idx == 0 &&
+			   (args->n_files - args->n_dirs) ? "\n" : ""), error(args);
 	}
 	else
 	{

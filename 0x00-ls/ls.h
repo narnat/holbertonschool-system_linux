@@ -142,7 +142,7 @@ void en_queue(queue_t *queue, container_t dir);
 queue_t *create_queue();
 void free_queue(queue_t **queue);
 
-int ls(args_t *args);
+void ls(args_t *args);
 void error(args_t *args);
 void set_opts(args_t *args);
 void print_args(args_t *args);
@@ -152,6 +152,7 @@ void read_files(args_t *args, node_t *dir, int size, uint idx);
 void free_arr(container_t *files, int size);
 int list_hidden(args_t *args, char *file_name);
 void print_dir_name(args_t *args, char *name, uint idx);
+void extract_dirs(args_t *args, container_t *files, int size);
 
 void print_info(args_t *args, container_t *file, size_t *width);
 char get_file_type(stat_t sb);
