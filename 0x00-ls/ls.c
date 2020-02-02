@@ -140,7 +140,7 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 		}
 		print_files(args, files, cur_size, width);
 		if (args->opt.show_nested)
-			extract_dirs(args, files, cur_size);
+			args->opt.is_recursing = 1, extract_dirs(args, files, cur_size);
 		closedir(open_dir), free_arr(files, cur_size);
 	}
 }

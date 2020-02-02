@@ -90,7 +90,10 @@ void print_dir_name(args_t *args, char *name, uint idx)
 			errno = 0;
 		printf("\n");
 	}
-	if (args->err > 0 || args->n_files > 1)
+	else if ((idx != 0 || args->opt.is_recursing)
+			 && args->strip_path && args->opt.show_nested)
+		printf("\n");
+	if (args->err > 0 || args->n_files > 1 || (args->opt.show_nested))
 	{
 		printf("%s:\n", name);
 	}

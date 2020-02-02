@@ -56,6 +56,7 @@ typedef struct stat stat_t;
  * @sort_size: -S option
  * @sort_time: -t option
  * @print_dir_name: prints names of dirs
+ * @is_recursing: on if it is inside recursion
  * Description: options struct
  */
 typedef struct options_s
@@ -71,6 +72,7 @@ typedef struct options_s
 	unsigned int sort_time				 :1;
 
 	unsigned int print_dir_name			 :1;
+	unsigned int is_recursing			 :1;
 } opts_t;
 
 /**
