@@ -31,7 +31,9 @@ int sort_reverse(container_t *f1, container_t *f2)
  */
 int sort_size(container_t *f1, container_t *f2)
 {
-	return (_strlen(f1->name) > _strlen(f2->name) ? 1 : 0);
+	if (f1->sb.st_size == f2->sb.st_size)
+		return (sort_regular(f1, f2));
+	return (f1->sb.st_size >= f2->sb.st_size ? 1 : 0);
 }
 
 
