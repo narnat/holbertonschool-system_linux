@@ -63,7 +63,7 @@ void ls(args_t *args)
 	if (files_i == 0 && dir_size == 0 && args->err != FILE_ERR)
 	{
 		lstat(".", &(files[files_i].sb));
-		files[files_i].name = ".", files_i++;
+		files[files_i].name = ".", files_i++, dir_size++;
 	}
 	args->n_files = files_i, args->n_dirs = dir_size;
 	print_files(args, files, files_i, width);
