@@ -35,7 +35,15 @@ int sort_size_rev(container_t *f1, container_t *f2)
  */
 int sort_time(container_t *f1, container_t *f2)
 {
-	return (_strlen(f1->name) > _strlen(f2->name) ? 0 : 1);
+	if (f1->sb.st_mtim.tv_sec == f2->sb.st_mtim.tv_sec)
+	{
+		if (f1->sb.st_mtim.tv_nsec == f2->sb.st_mtim.tv_nsec)
+		{
+			return (sort_regular(f1, f2));
+		}
+		return (f1->sb.st_mtim.tv_nsec >= f2->sb.st_mtim.tv_nsec ? 1 : 0);
+	}
+	return (f1->sb.st_mtim.tv_sec >= f2->sb.st_mtim.tv_sec ? 1 : 0);
 }
 
 /**
@@ -46,5 +54,13 @@ int sort_time(container_t *f1, container_t *f2)
  */
 int sort_time_rev(container_t *f1, container_t *f2)
 {
-	return (_strlen(f1->name) > _strlen(f2->name) ? 0 : 1);
+	if (f1->sb.st_mtim.tv_sec == f2->sb.st_mtim.tv_sec)
+	{
+		if (f1->sb.st_mtim.tv_nsec == f2->sb.st_mtim.tv_nsec)
+		{
+			return (sort_reverse(f1, f2));
+		}
+		return (f1->sb.st_mtim.tv_nsec >= f2->sb.st_mtim.tv_nsec ? 0 : 1);
+	}
+	return (f1->sb.st_mtim.tv_sec >= f2->sb.st_mtim.tv_sec ? 0 : 1);
 }

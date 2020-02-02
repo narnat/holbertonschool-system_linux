@@ -127,9 +127,7 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 		while ((read = readdir(open_dir)) != NULL)
 		{
 			if (cur_size * (int)sizeof(container_t) == size)
-			{
 				files = _realloc(files, size, size * 2), size *= 2;
-			}
 			if (!list_hidden(args, read->d_name))
 				continue;
 			temp = _strlen(dir->dir.name);
@@ -141,6 +139,8 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 			get_info_width(width, files[cur_size].sb), cur_size++;
 		}
 		print_files(args, files, cur_size, width);
+		if (args->opt.show_nested)
+			extract_dirs(args, files, cur_size);
 		closedir(open_dir), free_arr(files, cur_size);
 	}
 }
