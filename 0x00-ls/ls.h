@@ -178,6 +178,8 @@ int sort_time(container_t *f1, container_t *f2);
 int sort_size(container_t *f1, container_t *f2);
 int sort_reverse(container_t *f1, container_t *f2);
 int sort_regular(container_t *f1, container_t *f2);
+int sort_time_rev(container_t *f1, container_t *f2);
+int sort_size_rev(container_t *f1, container_t *f2);
 
 char _tolower(char c);
 #endif /* LS_H */

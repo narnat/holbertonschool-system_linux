@@ -74,7 +74,7 @@ char *_strrchr(char *s, char c)
 
 char _tolower(char c)
 {
-	if (c >= 'A' && c <= 'Z')
-		return (c + ('a' - 'A'));
+	/* if (c >= 'A' && c <= 'Z') */
+	/*	return (c + ('a' - 'A')); */
 	return (c);
 }

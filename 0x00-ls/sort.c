@@ -58,12 +58,39 @@ void quickSort(container_t *arr, int low, int high, size_t size,
  */
 void sort(args_t *args, container_t *arr, size_t size)
 {
-	if (args->opt.sort_reverse)
-		quickSort(arr, 0, size - 1, size, sort_reverse);
+	if (args->opt.sort_size && args->opt.sort_reverse)
+		quickSort(arr, 0, size - 1, size,  sort_size_rev);
+	else if (args->opt.sort_time && args->opt.sort_reverse)
+		quickSort(arr, 0, size - 1, size, sort_time_rev);
 	else if (args->opt.sort_size)
 		quickSort(arr, 0, size - 1, size,  sort_size);
 	else if (args->opt.sort_time)
 		quickSort(arr, 0, size - 1, size, sort_time);
+	else if (args->opt.sort_reverse)
+		quickSort(arr, 0, size - 1, size, sort_reverse);
 	else
 		quickSort(arr, 0, size - 1, size, sort_regular);
+}
+
+/**
+ * sort_regular - sort files arr
+ * @f1: argument struct
+ * @f2: Array
+ * Return: 1 if f2 > f1, 0 if otherwise
+ */
+int sort_regular(container_t *f1, container_t *f2)
+{
+	return (_strcmp(f1->name, f2->name) > 0 ? 0 : 1);
+}
+
+
+/**
+ * sort_reverse - sort files arr
+ * @f1: argument struct
+ * @f2: Array
+ * Return: 1 if f2 > f1, 0 if otherwise
+ */
+int sort_reverse(container_t *f1, container_t *f2)
+{
+	return (_strcmp(f1->name, f2->name) > 0 ? 1 : 0);
 }

@@ -29,16 +29,13 @@ void set_opts(args_t *args)
 					args->opt.show_info = 1;
 					break;
 				case ('r'):
-					args->opt.sort_reverse = 1, args->opt.sort_size = 0;
-					args->opt.sort_time = 0;
+					args->opt.sort_reverse = 1;
 					break;
 				case ('S'):
-					args->opt.sort_size = 1, args->opt.sort_reverse = 0;
-					args->opt.sort_time = 0;
+					args->opt.sort_size = 1, args->opt.sort_time = 0;
 					break;
 				case ('t'):
-					args->opt.sort_time = 1, args->opt.sort_reverse = 0;
-					args->opt.sort_size = 0;
+					args->opt.sort_time = 1, args->opt.sort_size = 0;
 					break;
 				case ('R'):
 					args->opt.show_nested = 1;
