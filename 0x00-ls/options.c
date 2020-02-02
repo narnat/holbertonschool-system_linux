@@ -85,7 +85,6 @@ void get_file_permissions(stat_t sb, char *perms)
 void print_info(args_t *args, container_t *file, size_t *width)
 {
 	char permissions[11] = "----------\0";
-	char *time = NULL;
 	struct passwd *uid = getpwuid(file->sb.st_uid);
 	struct group *gid = getgrgid(file->sb.st_gid);
 
@@ -111,11 +110,8 @@ void print_info(args_t *args, container_t *file, size_t *width)
 	}
 
 	printf(" %*ld", (int)width[3], (long) file->sb.st_size);
-	time = ctime(&(file->sb.st_mtime));
-	time[16] = '\0'; /*24 is last*/
-	printf(" %s ", time);
+	printf(" %s ", get_time(file->sb));
 }
-
 
 /**
  * get_file_type - returns character with 1st letter of type name

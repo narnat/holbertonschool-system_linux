@@ -159,6 +159,7 @@ void get_file_permissions(stat_t sb, char *perms);
 void get_info_width(size_t *width, stat_t sb);
 size_t number_width(size_t n);
 size_t max(size_t n1, size_t n2);
+char *get_time(stat_t sb);
 
 char *_strdup(char *str);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
