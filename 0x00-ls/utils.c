@@ -120,8 +120,8 @@ int _strcmp(char *s1, char *s2)
 	int diff, i;
 
 	i = 0;
-	while (s1[i] == s2[i] && s1[i] && s2[i])
+	while (_tolower(s1[i]) == _tolower(s2[i]) && s1[i] && s2[i])
 		i++;
-	diff = s1[i] - s2[i];
+	diff = _tolower(s1[i]) - _tolower(s2[i]);
 	return (diff);
 }

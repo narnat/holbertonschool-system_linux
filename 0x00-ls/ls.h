@@ -83,6 +83,7 @@ typedef struct options_s
  * @dir_name: dir name for error
  * @n_files: number of files passed as argument
  * @n_dirs: number of dirs passed as argument
+ * @strip_path: decides whether to strip path to file or not
  */
 typedef struct arguments_s
 {
@@ -94,6 +95,7 @@ typedef struct arguments_s
 	char *dir_name;
 	int n_files;
 	int n_dirs;
+	char strip_path;
 } args_t;
 
 
@@ -163,5 +165,18 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char *_strchr(char *s, char c);
 size_t _strlen(char *s);
 int _strcmp(char *s1, char *s2);
+char *_strrchr(char *s, char c);
 
+int partition(container_t *arr, int low, int high,
+			  int (*cmp)(container_t *f1, container_t *f2));
+void quickSort(container_t *arr, int low, int high, size_t size,
+			   int (*cmp)(container_t *f1, container_t *f2));
+void swap(container_t *f1, container_t *f2);
+void sort(args_t *args, container_t *arr, size_t size);
+int sort_time(container_t *f1, container_t *f2);
+int sort_size(container_t *f1, container_t *f2);
+int sort_reverse(container_t *f1, container_t *f2);
+int sort_regular(container_t *f1, container_t *f2);
+
+char _tolower(char c);
 #endif /* LS_H */

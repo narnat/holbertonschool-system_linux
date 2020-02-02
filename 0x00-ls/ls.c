@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 	args.dir_name = NULL;
 	args.n_files = 0;
 	args.n_dirs = 0;
+	args.strip_path = 0;
 
 	set_opts(&args);
 	ls(&args);
@@ -112,15 +113,15 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 			}
 			if (!list_hidden(args, read->d_name))
 				continue;
-			files[cur_size].name = _strdup(read->d_name), temp = _strlen(dir->dir.name);
+			temp = _strlen(dir->dir.name);
 			if (dir->dir.name[temp - 1] == '/')
 				dir->dir.name[temp - 1] = '\0';
 			sprintf(buf, "%s/%s", dir->dir.name, read->d_name);
+			files[cur_size].name = _strdup(buf);
 			lstat(buf, &(files[cur_size].sb));
 			get_info_width(width, files[cur_size].sb), cur_size++;
 		}
 		print_files(args, files, cur_size, width);
-		closedir(open_dir);
-		free_arr(files, cur_size);
+		closedir(open_dir), free_arr(files, cur_size);
 	}
 }

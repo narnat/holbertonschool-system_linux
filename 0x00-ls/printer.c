@@ -30,17 +30,23 @@ void print_files(args_t *args, container_t *files, int size, size_t *width)
 {
 	int files_i, flag = 0;
 	char *separator = args->opt.put_newline ? "\n" : "\t";
+	char *name = NULL;
 
+	sort(args, files, size);
 	for (files_i = 0; files_i < size; files_i++)
 	{
+		if (args->strip_path)
+			name = _strrchr(files[files_i].name, '/');
 		flag = 1;
 		print_info(args, &(files[files_i]), width);
-		printf("%s", files[files_i].name);
+		printf("%s", name ? ++name : files[files_i].name);
 		print_link_src(args, &files[files_i]);
-		printf("%s", separator);
+		if (files_i != size - 1 || args->opt.put_newline)
+			printf("%s", separator);
 	}
 	if (flag && !args->opt.put_newline)
 		printf("\n");
+	args->strip_path = 1;
 }
 
 
