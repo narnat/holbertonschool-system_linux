@@ -3,3 +3,4 @@ test/
 *.out
 *.cb
 .bash_history
+ls_test/
