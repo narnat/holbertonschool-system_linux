@@ -42,6 +42,10 @@ void error(args_t *args)
 	if (args->err == P_ERR)
 	{
 		sprintf(buf, "cannot open directory %s", args->dir_name);
-		args->err = LS_SERIOUS, perror(buf);
+		if (args->opt.is_recursing && args->err == NO_ERR)
+			args->err = LS_MINOR;
+		else
+			args->err = LS_SERIOUS;
+		perror(buf);
 	}
 }
