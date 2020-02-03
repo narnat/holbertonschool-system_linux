@@ -94,6 +94,26 @@ void extract_dirs(args_t *args, container_t *files, int size)
 	print_dirs(args, dirs);
 }
 
+
+/**
+ * get_full_path - gets full path for the file
+ * @path: path
+ * @file: file
+ * Return: full path
+ */
+char *get_full_path(char *path, char *file)
+{
+	int size;
+	char buf[BUFSIZ];
+
+	size = _strlen(path);
+	if (path[size - 1] == '/')
+		path[size - 1] = '\0';
+	sprintf(buf, "%s/%s", path, file);
+
+	return (_strdup(buf));
+}
+
 /**
  * read_files - opens dir and reads files
  * @args: global arguments
@@ -103,9 +123,8 @@ void extract_dirs(args_t *args, container_t *files, int size)
  */
 void read_files(args_t *args, node_t *dir, int size, uint idx)
 {
-	int cur_size = 0, temp;
+	int cur_size = 0;
 	DIR *open_dir;
-	char buf[BUFSIZ];
 	struct dirent *read;
 	container_t *files = NULL;
 	size_t width[4] = {0};
@@ -123,21 +142,19 @@ void read_files(args_t *args, node_t *dir, int size, uint idx)
 	}
 	else
 	{
-		print_dir_name(args, dir->dir.name, idx);
 		while ((read = readdir(open_dir)) != NULL)
 		{
 			if (cur_size * (int)sizeof(container_t) == size)
 				files = _realloc(files, size, size * 2), size *= 2;
 			if (!list_hidden(args, read->d_name))
 				continue;
-			temp = _strlen(dir->dir.name);
-			if (dir->dir.name[temp - 1] == '/')
-				dir->dir.name[temp - 1] = '\0';
-			sprintf(buf, "%s/%s", dir->dir.name, read->d_name);
-			files[cur_size].name = _strdup(buf);
-			lstat(buf, &(files[cur_size].sb));
+			files[cur_size].name = get_full_path(dir->dir.name, read->d_name);
+			lstat(files[cur_size].name, &(files[cur_size].sb));
+			if ((files[cur_size].sb.st_mode & S_IFMT) == S_IFDIR)
+				args->opt.is_dir = 1;
 			get_info_width(width, files[cur_size].sb), cur_size++;
 		}
+		print_dir_name(args, dir->dir.name, idx);
 		print_files(args, files, cur_size, width);
 		if (args->opt.show_nested)
 			args->opt.is_recursing = 1, extract_dirs(args, files, cur_size);

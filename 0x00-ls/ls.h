@@ -57,6 +57,7 @@ typedef struct stat stat_t;
  * @sort_time: -t option
  * @print_dir_name: prints names of dirs
  * @is_recursing: on if it is inside recursion
+ * @is_dir: tells if there is there a dir nested
  * Description: options struct
  */
 typedef struct options_s
@@ -73,6 +74,7 @@ typedef struct options_s
 
 	unsigned int print_dir_name			 :1;
 	unsigned int is_recursing			 :1;
+	unsigned int is_dir					 :1;
 } opts_t;
 
 /**
@@ -183,6 +185,8 @@ int sort_reverse(container_t *f1, container_t *f2);
 int sort_regular(container_t *f1, container_t *f2);
 int sort_time_rev(container_t *f1, container_t *f2);
 int sort_size_rev(container_t *f1, container_t *f2);
+
+char *get_full_path(char *path, char *file);
 
 char _tolower(char c);
 #endif /* LS_H */
