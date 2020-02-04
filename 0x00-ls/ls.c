@@ -51,7 +51,8 @@ void ls(args_t *args)
 		else if ((files[files_i].sb.st_mode & S_IFMT) == S_IFDIR)
 		{
 			files[files_i].name = args->argv[argv_i];
-			files_i++, dir_size++;
+			files_i++;
+			dir_size++;
 		}
 		else
 		{
