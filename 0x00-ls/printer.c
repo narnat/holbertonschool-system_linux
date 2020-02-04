@@ -67,7 +67,7 @@ void print_dirs(args_t *args, queue_t *dirs)
 
 	while (node_i)
 	{
-		read_files(args, node_i, 100, idx);
+		read_files(args, node_i, 4, idx);
 		node_i = node_i->next;
 		idx++;
 	}
