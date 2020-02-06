@@ -189,4 +189,5 @@ int sort_size_rev(container_t *f1, container_t *f2);
 char *get_full_path(char *path, char *file);
 
 char _tolower(char c);
+int _strcmp2(char *s1, char *s2);
 #endif /* LS_H */

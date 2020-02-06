@@ -108,14 +108,14 @@ size_t _strlen(char *s)
 }
 
 /**
- * _strcmp - compares two strings
+ * _strcmp2 - compares two strings
  * @s1: first string
  * @s2: second string
  *
  * Return: returns the differences of ASCII characters
  */
 
-int _strcmp(char *s1, char *s2)
+int _strcmp2(char *s1, char *s2)
 {
 	int diff, i;
 
