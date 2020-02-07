@@ -4,3 +4,4 @@ test/
 *.cb
 .bash_history
 ls_test/
+*main*
