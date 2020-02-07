@@ -2,63 +2,110 @@
 #include "laps.h"
 #include <string.h>
 
+
 /**
- * _realloc - implementation
- * @ptr: pointer to the memory
- * @old_size: old size of the block of memory
- * @new_size: new size of the block of memory
- *
+ * print_listint - prints all elements of a listint_t list
+ * @h: pointer to head of list
+ * Return: number of nodes
+ */
+size_t print_listint(const listint_t *h)
+{
+	const listint_t *current;
+	unsigned int n; /* number of nodes */
+
+	current = h;
+	n = 0;
+	while (current != NULL)
+	{
+		printf("Car %i [%lu laps]\n", current->n, current->laps);
+		current = current->next;
+		n++;
+	}
+
+	return (n);
+}
+
+/**
+ * free_listint - frees a listint_t list
+ * @head: pointer to list to be freed
  * Return: void
  */
-
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
+void free_listint(listint_t *head)
 {
-	char *s, *a;
-	unsigned int i, limit;
+	listint_t *current;
 
-	if (old_size == new_size)
-		return (ptr);
-	if (ptr != NULL && new_size == 0)
+	while (head != NULL)
 	{
-		free(ptr);
-		return (NULL);
+		current = head;
+		head = head->next;
+		free(current);
 	}
-	if (ptr == NULL)
-		return (malloc(new_size));
-	s = malloc(sizeof(char) * new_size);
-	if (!s)
-		return (NULL);
-	a = ptr;
-	limit = new_size > old_size ? old_size : new_size;
-	for (i = 0; i < limit; i++)
-	{
-		s[i] = a[i];
-		/* free(a + i); */
-	}
-	free(ptr);
-	/* ptr = NULL; */
-	return (s);
 }
+
 
 /**
- * max - returns max from array
- * @arr: integer array
- * @size: size of @arr
- * Return: max element from @arr
-*/
-int max(int *arr, size_t size)
+ * insert_node - inserts node at correct place
+ * @head: head of the linked list
+ * @number: data of the new node
+ * Return: sorted linked list with a new node
+ */
+listint_t *insert_node(listint_t **head, int number)
 {
-	size_t i;
-	int max = INT_MIN;
+	listint_t *node = NULL;
+	listint_t *prev = NULL;
+	listint_t *next = NULL;
 
-	for (i = 0; i < size; i++)
+	if (!head)
+		return (NULL);
+
+	node = malloc(sizeof(*node));
+	if (!node)
+		return (NULL);
+	node->n = number;
+	node->laps = 0;
+	node->next = NULL;
+	next = *head;
+	printf("Car %i joined the race\n", node->n);
+
+	if (!*head)
+		return (node);
+	while (prev || next)
 	{
-		if (arr[i] > max)
-			max = arr[i];
+		if ((!prev || prev->n <= number) && (!next || next->n > number))
+		{
+			if (!prev)
+				*head = node;
+			else
+				prev->next = node;
+			node->next = next;
+		}
+		prev = next;
+		if (next)
+			next = next->next;
 	}
 
-	return (max);
+	return (*head);
 }
+
+
+/**
+ * get_id - get id of the car
+ * @head: linked list of cars
+ * @id: the id to look for
+ * Return: the node with given @id or NULL
+ */
+listint_t *get_id(listint_t *head, int id)
+{
+	while (head)
+	{
+		if (head->n == id)
+			return (head);
+		head = head->next;
+	}
+
+	return (NULL);
+}
+
 
 /**
  * race_state - Tells the state of the race
@@ -67,44 +114,31 @@ int max(int *arr, size_t size)
  */
 void race_state(int *id, size_t size)
 {
-	static int *st;
-	static size_t st_size;
-	size_t old_size;
-	size_t i, m;
+	static listint_t *list;
+	listint_t *tmp;
+	size_t i;
 
 	if (!size)
 	{
-		free(st);
+		free_listint(list);
 		return;
 	}
-	old_size = st_size;
-	m = max(id, size);
-	st_size = st_size > m ? st_size : m;
-	if (st == NULL)
-	{
-		st = malloc(st_size * sizeof(int));
-		memset(st, -1, st_size * sizeof(int));
-	}
 
-	if (old_size && st_size > old_size)
+	if (list == NULL)
 	{
-		st = _realloc(st, old_size * sizeof(int), st_size * sizeof(int));
-		memset(st + old_size, -1, (st_size - old_size) * sizeof(int));
+		list = insert_node(&list, id[0]);
+		list->laps--;
 	}
 
 	for (i = 0; i < size; i++)
 	{
-		if (st[id[i] - 1] == -1)
-		{
-			printf("Car %d joined the race\n", id[i]);
-		}
-		st[id[i] - 1]++;
+		tmp = get_id(list, id[i]);
+		if (!tmp)
+			insert_node(&list, id[i]);
+		else
+			tmp->laps++;
 	}
 
 	printf("Race state:\n");
-	for (i = 0; i < st_size; i++)
-	{
-		if (st[i] >= 0)
-			printf("Car %lu [%d laps]\n", i + 1, st[i]);
-	}
+	print_listint(list);
 }
