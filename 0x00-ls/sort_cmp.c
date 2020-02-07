@@ -76,6 +76,7 @@ int sort_time_rev(container_t *f1, container_t *f2)
 int _strcmp(char *s1, char *s2)
 {
 	char *tmp;
+	int res;
 
 	tmp = _strrchr(s1, '/');
 	if (tmp)
@@ -86,11 +87,16 @@ int _strcmp(char *s1, char *s2)
 	if (tmp)
 		s2 = tmp, s2++;
 
+	if (!_strcmp_case_sensitive(s1, "..") && !_strcmp_case_sensitive(s2, "."))
+		return (1);
+
 	while (s1 && *s1 == '.')
 		s1++;
 
 	while (s2 && *s2 == '.')
 		s2++;
-
-	return (_strcmp2(s1, s2));
+	res = _strcmp_case_insensitive(s1, s2);
+	if (!res)
+		return ((-1) * _strcmp_case_sensitive(s1, s2));
+	return (res);
 }

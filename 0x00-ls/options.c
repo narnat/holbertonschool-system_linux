@@ -148,7 +148,8 @@ int list_hidden(args_t *args, char *file_name)
 {
 	if (!args->opt.show_cur_and_parent)
 	{
-		if (!_strcmp(file_name, ".") || !_strcmp(file_name, ".."))
+		if (!_strcmp_case_sensitive(file_name, ".")
+		    || !_strcmp_case_sensitive(file_name, ".."))
 			return (0);
 	}
 	if (!args->opt.show_hidden)
