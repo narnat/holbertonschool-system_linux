@@ -3,7 +3,7 @@
 #include <string.h>
 
 /**
- * _realloc - realloc() implementation
+ * _realloc - implementation
  * @ptr: pointer to the memory
  * @old_size: old size of the block of memory
  * @new_size: new size of the block of memory
