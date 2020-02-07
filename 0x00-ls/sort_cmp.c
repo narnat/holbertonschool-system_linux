@@ -70,7 +70,9 @@ int sort_time_rev(container_t *f1, container_t *f2)
  * @s1: first string
  * @s2: second string
  *
- * Return: returns the differences of ASCII characters
+ * Return: returns the differences of ASCII characters, the issue is
+ * this won't handle folder1/folder2 folder1 (without the ending slash),
+ * it will sort the reverse
  */
 
 int _strcmp(char *s1, char *s2)
