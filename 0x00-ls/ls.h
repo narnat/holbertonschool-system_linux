@@ -191,4 +191,5 @@ char *get_full_path(char *path, char *file);
 char _tolower(char c);
 int _strcmp_case_insensitive(char *s1, char *s2);
 int _strcmp_case_sensitive(char *s1, char *s2);
+int _strncmp(const char *s1, const char *s2, size_t n);
 #endif /* LS_H */
