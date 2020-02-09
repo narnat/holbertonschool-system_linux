@@ -80,38 +80,43 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
  */
 char *read_descriptor(descriptor_t *desc)
 {
-	size_t i, res_size = 0, old_size = 0;
+	size_t i, res_size = 0, act_size = 1, res_pos = 0;
 	char *res = NULL;
 	ssize_t read_val;
 
-	for (i = desc->pos; i < READ_SIZE; i++)
+	i = desc->pos;
+	while (i < READ_SIZE)
 	{
 		if (desc->buf[i] == '\n')
 		{
-			old_size = res_size;
-			res_size += sizeof(char) * (i - desc->pos + 1);
-			res = _realloc(res, old_size, res_size);
-			memcpy(res, desc->buf + desc->pos, i - desc->pos);
-			res[i - desc->pos] = '\0';
-			desc->pos = ++i;
+			if (act_size > res_size)
+				res = _realloc(res, res_size, act_size);
+			memcpy(res + (res_pos), desc->buf + desc->pos, (i - desc->pos + 1));
+			res[res_pos + i - desc->pos] = '\0', desc->pos = ++i;
 			return (res);
 		}
 
 		if (i == READ_SIZE - 1)
 		{
-			old_size = res_size;
-			res_size += READ_SIZE;
-			res = _realloc(res, old_size, res_size);
-			memcpy(res, desc->buf + desc->pos, i - desc->pos);
+			if (act_size > res_size)
+			{
+				res = _realloc(res, res_size, act_size);
+				res_size += act_size;
+			}
+			memcpy(res + (res_pos), desc->buf + desc->pos, (i - desc->pos + 1));
+			res_pos += i - desc->pos + 1; /* will point to the end, not last char*/
 			memset(desc->buf, 0, READ_SIZE);
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
-			if (!read_val)
+			if (read_val < 1)
 			{
 				free(res);
 				return (NULL);
 			}
 			desc->pos = i = 0;
 		}
+		else
+			++i;
+		++act_size;
 	}
 	free(res);
 	return (NULL);
