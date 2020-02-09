@@ -27,14 +27,33 @@ char *_strchr(char *s, char c)
  */
 descriptor_t *get_fd(descriptor_t *head, int fd)
 {
+	descriptor_t *prev = NULL, *node;
+
+	if (head->fd == -1)
+	{
+		head->fd = fd;
+		read(head->fd, head->buf, READ_SIZE);
+	}
 	while (head)
 	{
 		if (head->fd == fd)
 			return (head);
+		prev = head;
 		head = head->next;
 	}
 
-	return (NULL);
+	node = malloc(sizeof(*node));
+	if (!node)
+		return (NULL);
+
+	node->fd = fd;
+	node->next = NULL;
+	memset(node->buf, 0, READ_SIZE);
+	node->pos = 0;
+	node->flush = 1;
+	read(node->fd, node->buf, READ_SIZE);
+	prev->next = node;
+	return (node);
 }
 
 /**
@@ -141,11 +160,9 @@ char *read_descriptor(descriptor_t *desc)
  */
 char *_getline(const int fd)
 {
-	static descriptor_t list = {0, {0}, 0, 1, NULL};
+	static descriptor_t list = {-1, {0}, 0, 1, NULL};
 	descriptor_t *cur = NULL, *tmp;
 
-	if (fd < 0)
-		return (NULL);
 	if (fd == -1)
 	{
 		cur = list.next;
@@ -157,13 +174,9 @@ char *_getline(const int fd)
 		}
 		return (NULL);
 	}
+	if (fd < 0)
+		return (NULL);
 
-	if (list.fd == 0)
-	{
-		list.fd = fd;
-		read(fd, list.buf, READ_SIZE);
-	}
 	cur = get_fd(&list, fd);
-
 	return (read_descriptor(cur));
 }
