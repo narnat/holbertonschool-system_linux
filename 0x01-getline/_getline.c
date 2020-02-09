@@ -50,7 +50,6 @@ descriptor_t *get_fd(descriptor_t *head, int fd)
 	node->next = NULL;
 	memset(node->buf, 0, READ_SIZE);
 	node->pos = 0;
-	node->flush = 1;
 	read(node->fd, node->buf, READ_SIZE);
 	prev->next = node;
 	return (node);
