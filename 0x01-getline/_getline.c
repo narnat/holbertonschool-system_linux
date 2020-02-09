@@ -95,9 +95,9 @@ char *read_descriptor(descriptor_t *desc)
 			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
 			if (needed_space > free_space)
 			{
-				line = _realloc(line, line_size, line_size + READ_SIZE + 2);
+				line = _realloc(line, line_size, line_size + READ_SIZE);
 				line_size += READ_SIZE;
-				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space + 2);
+				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space);
 			}
 			memcpy(line + line_pos, desc->buf + desc->pos, needed_space);
 			line_pos += needed_space;
