@@ -1,6 +1,25 @@
 #include "_getline.h"
 
 /**
+ * _strchr - locates a character in a string
+ * @s: string
+ * @c: character
+ *
+ * Return: returns a pointer
+ */
+
+char *_strchr(char *s, char c)
+{
+	while (*s && *s != c)
+	{
+		s++;
+	}
+	if (*s == c)
+		return (s);
+	return (NULL);
+}
+
+/**
  * get_fd - get id of the car
  * @head: linked list of cars
  * @fd: the id to look for
@@ -69,7 +88,7 @@ char *read_descriptor(descriptor_t *desc)
 
 	while (1)
 	{
-		temp = strchr(desc->buf + desc->pos, '\n');
+		temp = _strchr(desc->buf + desc->pos, '\n');
 		if (!temp)
 		{
 			free_space = line_size - line_pos;
