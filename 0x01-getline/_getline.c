@@ -104,6 +104,11 @@ char *read_descriptor(descriptor_t *desc)
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
+				if (desc->flush)
+				{
+					desc->flush = 0;
+					return (line);
+				}
 				free(line);
 				return (NULL);
 			}
@@ -136,7 +141,7 @@ char *read_descriptor(descriptor_t *desc)
  */
 char *_getline(const int fd)
 {
-	static descriptor_t list = {0, {0}, 0, NULL};
+	static descriptor_t list = {0, {0}, 0, 1, NULL};
 	descriptor_t *cur = NULL, *tmp;
 
 	if (fd < 0)
