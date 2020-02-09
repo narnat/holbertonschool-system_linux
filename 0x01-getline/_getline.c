@@ -104,7 +104,7 @@ char *read_descriptor(descriptor_t *desc)
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
-				if (desc->flush)
+				if (desc->flush && line_pos == READ_SIZE)
 				{
 					desc->flush = 0;
 					return (line);
