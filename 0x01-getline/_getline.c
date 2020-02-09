@@ -1,23 +1,6 @@
 #include "_getline.h"
 
 /**
- * free_descriptor - frees a descriptor_t list
- * @head: pointer to list to be freed
- * Return: void
- */
-void free_descriptor(descriptor_t *head)
-{
-	descriptor_t *current;
-
-	while (head != NULL)
-	{
-		current = head;
-		head = head->next;
-		free(current);
-	}
-}
-
-/**
  * get_fd - get id of the car
  * @head: linked list of cars
  * @fd: the id to look for
@@ -80,45 +63,50 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
  */
 char *read_descriptor(descriptor_t *desc)
 {
-	size_t i, res_size = 0, act_size = 1, res_pos = 0;
-	char *res = NULL;
+	size_t line_size = 0, line_pos = 0, free_space, needed_space;
+	char *line = NULL, *temp;
 	ssize_t read_val;
 
-	i = desc->pos;
-	while (i < READ_SIZE)
+	while (1)
 	{
-		if (desc->buf[i] == '\n')
+		temp = strchr(desc->buf + desc->pos, '\n');
+		if (!temp)
 		{
-			if (act_size > res_size)
-				res = _realloc(res, res_size, act_size);
-			memcpy(res + (res_pos), desc->buf + desc->pos, (i - desc->pos + 1));
-			res[res_pos + i - desc->pos] = '\0', desc->pos = ++i;
-			return (res);
-		}
-
-		if (i == READ_SIZE - 1)
-		{
-			if (act_size > res_size)
+			free_space = line_size - line_pos;
+			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
+			if (needed_space > free_space)
 			{
-				res = _realloc(res, res_size, act_size);
-				res_size += act_size;
+				line = _realloc(line, line_size, line_size + READ_SIZE + 2);
+				line_size += READ_SIZE;
+				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space + 2);
 			}
-			memcpy(res + (res_pos), desc->buf + desc->pos, (i - desc->pos + 1));
-			res_pos += i - desc->pos + 1; /* will point to the end, not last char*/
-			memset(desc->buf, 0, READ_SIZE);
+			memcpy(line + line_pos, desc->buf + desc->pos, needed_space);
+			line_pos += needed_space;
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
-				free(res);
+				free(line);
 				return (NULL);
 			}
-			desc->pos = i = 0;
+			if (read_val < READ_SIZE)
+				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
+			desc->pos = 0;
 		}
 		else
-			++i;
-		++act_size;
+		{
+			*temp = '\0', free_space = line_size - line_pos;
+			needed_space = temp - (desc->buf + desc->pos) + 1; /*Max READ_SIZE + 1*/
+			if (needed_space > free_space)
+			{
+				line = _realloc(line, line_size, line_size + READ_SIZE);
+				line_size += READ_SIZE;
+				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space);
+			}
+			memcpy(line + line_pos, desc->buf + desc->pos, needed_space);
+			desc->pos += temp - (desc->buf + desc->pos) + 1;
+			return (line);
+		}
 	}
-	free(res);
 	return (NULL);
 }
 
@@ -130,11 +118,19 @@ char *read_descriptor(descriptor_t *desc)
 char *_getline(const int fd)
 {
 	static descriptor_t list = {0, {0}, 0, NULL};
-	descriptor_t *cur = NULL;
+	descriptor_t *cur = NULL, *tmp;
 
+	if (fd < 0)
+		return (NULL);
 	if (fd == -1)
 	{
-		free_descriptor(list.next);
+		cur = list.next;
+		while (cur != NULL)
+		{
+			tmp = cur;
+			cur = cur->next;
+			free(tmp);
+		}
 		return (NULL);
 	}
 
