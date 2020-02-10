@@ -27,21 +27,17 @@ char *_strchr(char *s, char c, size_t len)
  * @fd: the id to look for
  * Return: the node with given @id or NULL
  */
-descriptor_t *get_fd(descriptor_t *head, int fd)
+descriptor_t *get_fd(descriptor_t **head, int fd)
 {
-	descriptor_t *prev = NULL, *node;
+	descriptor_t *prev = NULL, *node, *cur;
 
-	if (head->fd == -1)
+	cur = *head;
+	while (cur)
 	{
-		head->fd = fd;
-		read(head->fd, head->buf, READ_SIZE);
-	}
-	while (head)
-	{
-		if (head->fd == fd)
-			return (head);
-		prev = head;
-		head = head->next;
+		if (cur->fd == fd)
+			return (cur);
+		prev = cur;
+		cur = cur->next;
 	}
 
 	node = malloc(sizeof(*node));
@@ -53,7 +49,10 @@ descriptor_t *get_fd(descriptor_t *head, int fd)
 	memset(node->buf, 0, READ_SIZE);
 	node->pos = 0;
 	read(node->fd, node->buf, READ_SIZE);
-	prev->next = node;
+	if (!*head)
+		*head = node;
+	else
+		prev->next = node;
 	return (node);
 }
 
@@ -173,12 +172,13 @@ char *read_descriptor(descriptor_t *desc)
  */
 char *_getline(const int fd)
 {
-	static descriptor_t list = {-1, {0}, 0, NULL};
+	/* static descriptor_t list = {-1, {0}, 0, NULL}; */
+	static descriptor_t *list;
 	descriptor_t *cur = NULL, *tmp;
 
 	if (fd == -1)
 	{
-		cur = list.next;
+		cur = list;
 		while (cur != NULL)
 		{
 			tmp = cur;
