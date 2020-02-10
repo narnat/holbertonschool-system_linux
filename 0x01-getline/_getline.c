@@ -4,18 +4,20 @@
  * _strchr - locates a character in a string
  * @s: string
  * @c: character
+ * @len: the length of @s
  *
  * Return: returns a pointer
  */
 
-char *_strchr(char *s, char c)
+char *_strchr(char *s, char c, size_t len)
 {
-	while (*s && *s != c)
+	size_t i = 0;
+
+	for (i = 0; i < len; i++)
 	{
-		s++;
+		if (s[i] == c)
+			return (s + i);
 	}
-	if (*s == c)
-		return (s);
 	return (NULL);
 }
 
@@ -93,6 +95,35 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 	return (s);
 }
 
+
+/**
+ * read_descriptor - read function
+ * @line: the line
+ * @pos: pos in the @line
+ * @size: size of line
+ * @need: space needed for flushing
+ * @desc: file descriptor
+ * Return:  @line
+ */
+char *flush_buffer(char *line, size_t *pos, size_t *size,
+		   size_t need, descriptor_t *desc)
+{
+	size_t free_space;
+
+	free_space = *size - *pos;
+	if (need > free_space)
+	{
+		/*Adding one to new size*/
+		line = _realloc(line, *size, *size + READ_SIZE + 1);
+		*size += READ_SIZE;
+		memset(line + *pos + need, 0, READ_SIZE - need + 1);
+	}
+	memcpy(line + *pos, desc->buf + desc->pos, need);
+	*pos += need;
+	return (line);
+}
+
+
 /**
  * read_descriptor - read function
  * @desc: file descriptor
@@ -100,47 +131,35 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
  */
 char *read_descriptor(descriptor_t *desc)
 {
-	size_t line_size = 0, line_pos = 0, free_space, needed_space;
+	size_t line_size = 0, line_pos = 0, needed_space;
 	char *line = NULL, *temp;
 	ssize_t read_val;
 
 	while (1)
 	{
-		temp = _strchr(desc->buf + desc->pos, '\n');
+		temp = _strchr(desc->buf + desc->pos, '\n', READ_SIZE - desc->pos);
 		if (!temp)
 		{
-			free_space = line_size - line_pos;
 			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
-			if (needed_space > free_space)
-			{
-				line = _realloc(line, line_size, line_size + READ_SIZE);
-				line_size += READ_SIZE;
-				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space);
-			}
-			memcpy(line + line_pos, desc->buf + desc->pos, needed_space);
-			line_pos += needed_space;
+			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
+			if (read_val < READ_SIZE)
+				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			if (read_val < 1)
 			{
+				if (*line)
+					return (line);
 				free(line);
 				return (NULL);
 			}
-			if (read_val < READ_SIZE)
-				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			desc->pos = 0;
 		}
 		else
 		{
-			*temp = '\0', free_space = line_size - line_pos;
-			needed_space = temp - (desc->buf + desc->pos) + 1; /*Max READ_SIZE + 1*/
-			if (needed_space > free_space)
-			{
-				line = _realloc(line, line_size, line_size + READ_SIZE);
-				line_size += READ_SIZE;
-				memset(line + line_pos + needed_space, 0, READ_SIZE - needed_space);
-			}
-			memcpy(line + line_pos, desc->buf + desc->pos, needed_space);
-			desc->pos += temp - (desc->buf + desc->pos) + 1;
+			*temp = '\0';
+			needed_space = temp - (desc->buf + desc->pos) + 1;
+			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
+			desc->pos += needed_space;
 			return (line);
 		}
 	}
