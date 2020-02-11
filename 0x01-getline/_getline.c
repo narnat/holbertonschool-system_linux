@@ -149,7 +149,7 @@ char *read_descriptor(descriptor_t *desc)
 				if (line && *line)
 					return (line);
 				free(line);
-				free(desc);
+				/* free(desc); */
 				return (NULL);
 			}
 			desc->pos = 0;
