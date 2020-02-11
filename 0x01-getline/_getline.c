@@ -146,10 +146,11 @@ char *read_descriptor(descriptor_t *desc)
 				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			if (read_val < 1)
 			{
-				if (line && *line)
+				if (read_val == 0 && line && *line)
+				{
 					return (line);
+				}
 				free(line);
-				/* free(desc); */
 				return (NULL);
 			}
 			desc->pos = 0;
