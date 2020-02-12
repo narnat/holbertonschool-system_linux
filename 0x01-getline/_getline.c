@@ -122,7 +122,6 @@ char *flush_buffer(char *line, size_t *pos, size_t *size,
 	return (line);
 }
 
-
 /**
  * read_descriptor - read function
  * @desc: file descriptor
@@ -142,17 +141,20 @@ char *read_descriptor(descriptor_t *desc)
 			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
-			if (read_val < READ_SIZE)
-				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			if (read_val < 1)
 			{
 				if (read_val == 0 && line && *line)
 				{
+					memset(desc->buf, 0, READ_SIZE);
+					if (line[0] == '\n')
+						line[0] = '\0';
 					return (line);
 				}
 				free(line);
 				return (NULL);
 			}
+			if (read_val < READ_SIZE)
+				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			desc->pos = 0;
 		}
 		else
