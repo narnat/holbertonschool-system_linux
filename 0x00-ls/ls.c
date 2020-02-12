@@ -84,11 +84,17 @@ void extract_dirs(args_t *args, container_t *files, int size)
 {
 	int files_i;
 	queue_t *dirs = create_queue();
+	char *file = NULL;
 
 	for (files_i = 0; files_i < size; files_i++)
 	{
 		if ((files[files_i].sb.st_mode & S_IFMT) == S_IFDIR)
 		{
+			file = _strrchr(files[files_i].name, '/');
+			if (++file && args->opt.is_recursing == 1 &&
+			    (!_strcmp_case_sensitive(file, ".") ||
+			     !_strcmp_case_sensitive(file, "..")))
+				continue;
 			en_queue(dirs, files[files_i]);
 		}
 	}
