@@ -114,6 +114,8 @@ char *flush_buffer(char *line, size_t *pos, size_t *size,
 	{
 		/*Adding one to new size*/
 		line = _realloc(line, *size, *size + READ_SIZE + 1);
+		if (!line)
+			return (NULL);
 		*size += READ_SIZE;
 		memset(line + *pos + need, 0, READ_SIZE - need + 1);
 	}
@@ -140,14 +142,14 @@ char *read_descriptor(descriptor_t *desc)
 		{
 			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
+			if (!line)
+				return (NULL);
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
 				if (read_val == 0 && line && *line)
 				{
 					memset(desc->buf, 0, READ_SIZE);
-					if (line[0] == '\n')
-						line[0] = '\0';
 					return (line);
 				}
 				free(line);
@@ -162,6 +164,8 @@ char *read_descriptor(descriptor_t *desc)
 			*temp = '\0';
 			needed_space = temp - (desc->buf + desc->pos) + 1;
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
+			if (!line)
+				return (NULL);
 			desc->pos += needed_space;
 			return (line);
 		}
