@@ -1,5 +1,7 @@
 #include "_getline.h"
 
+static int failure;
+
 /**
  * _strchr - locates a character in a string
  * @s: string
@@ -77,20 +79,21 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 		free(ptr);
 		return (NULL);
 	}
-	if (ptr == NULL)
-		return (malloc(new_size));
 	s = malloc(sizeof(char) * new_size);
 	if (!s)
+	{
+		failure = 1;
 		return (NULL);
+	}
+	if (ptr == NULL)
+		return (s);
 	a = ptr;
 	limit = new_size > old_size ? old_size : new_size;
 	for (i = 0; i < limit; i++)
 	{
 		s[i] = a[i];
-		/* free(a + i); */
 	}
 	free(ptr);
-	/* ptr = NULL; */
 	return (s);
 }
 
@@ -142,7 +145,7 @@ char *read_descriptor(descriptor_t *desc)
 		{
 			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
-			if (!line)
+			if (!line && failure)
 				return (NULL);
 			read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
@@ -164,7 +167,7 @@ char *read_descriptor(descriptor_t *desc)
 			*temp = '\0';
 			needed_space = temp - (desc->buf + desc->pos) + 1;
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
-			if (!line)
+			if (!line && failure)
 				return (NULL);
 			desc->pos += needed_space;
 			return (line);
