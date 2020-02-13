@@ -202,5 +202,7 @@ char *_getline(const int fd)
 		return (NULL);
 
 	cur = get_fd(&list, fd);
+	if (!cur)
+		return (NULL);
 	return (read_descriptor(cur));
 }
