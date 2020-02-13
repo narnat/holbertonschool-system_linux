@@ -50,7 +50,7 @@ descriptor_t *get_fd(descriptor_t **head, int fd)
 	node->next = NULL;
 	memset(node->buf, 0, READ_SIZE);
 	node->pos = 0;
-	read(node->fd, node->buf, READ_SIZE);
+	/* read(node->fd, node->buf, READ_SIZE); */
 	if (!*head)
 		*head = node;
 	else
@@ -136,7 +136,7 @@ char *read_descriptor(descriptor_t *desc)
 {
 	size_t line_size = 0, line_pos = 0, needed_space;
 	char *line = NULL, *temp;
-	ssize_t read_val;
+	ssize_t read_val = 0, old_val;
 
 	while (1)
 	{
@@ -147,10 +147,10 @@ char *read_descriptor(descriptor_t *desc)
 			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
 			if (!line && failure)
 				return (NULL);
-			read_val = read(desc->fd, desc->buf, READ_SIZE);
+			old_val = read_val, read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
-				if (read_val == 0 && line && *line)
+				if (read_val == 0 && line && old_val > 0)
 				{
 					memset(desc->buf, 0, READ_SIZE);
 					return (line);
