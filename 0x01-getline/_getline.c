@@ -151,18 +151,15 @@ char *read_descriptor(descriptor_t *desc)
 					return (NULL);
 			}
 			old_val = read_val, read_val = read(desc->fd, desc->buf, READ_SIZE);
+			if (read_val < READ_SIZE)
+				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			if (read_val < 1)
 			{
 				if (read_val == 0 && line && old_val > 0)
-				{
-					memset(desc->buf, 0, READ_SIZE);
 					return (line);
-				}
 				free(line);
 				return (NULL);
 			}
-			if (read_val < READ_SIZE)
-				memset(desc->buf + (read_val), 0, (READ_SIZE - read_val));
 			desc->pos = 0;
 		}
 		else
