@@ -143,10 +143,13 @@ char *read_descriptor(descriptor_t *desc)
 		temp = _strchr(desc->buf + desc->pos, '\n', READ_SIZE - desc->pos);
 		if (!temp)
 		{
-			needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
-			line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
-			if (!line && failure)
-				return (NULL);
+			if (read_val > 0)
+			{
+				needed_space = READ_SIZE - desc->pos; /*Max READ_SIZE*/
+				line = flush_buffer(line, &line_pos, &line_size, needed_space, desc);
+				if (!line && failure)
+					return (NULL);
+			}
 			old_val = read_val, read_val = read(desc->fd, desc->buf, READ_SIZE);
 			if (read_val < 1)
 			{
