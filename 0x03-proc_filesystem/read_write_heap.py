@@ -29,17 +29,20 @@ try:
                 print("[*] Found heap")
                 tmp = line.split(" ")
                 addr = tmp[0].split("-")
+                if len(addr) != 2:
+                    print("Wrong address format")
+                    exit(1)
                 props_line["start"] = int(addr[0], 16)
                 props_line["end"] = int(addr[1], 16)
                 props_line["perms"] = tmp[1]
                 break
 
-        # if props_line["perms"] != "rw-p":
-        #     raise PermissionError
+        if props_line["perms"][:2] != "rw":
+            raise PermissionError
 
         mem.seek(props_line["start"])
         content = mem.read(props_line["end"] - props_line["start"])
-        idx = content.index(bytes(search_string + "\0", "ASCII"))
+        idx = content.index(bytes(search_string, "ASCII"))
         print("[*] Found string")
         print("[*] Replacing string")
         mem.seek(props_line["start"] + idx)
