@@ -1,4 +1,4 @@
-# Prov filesystem
+# Proc filesystem
 Write a script that finds a string in the heap of a running process, and replaces it.
 
     Usage: read_write_heap.py pid search_string replace_string
