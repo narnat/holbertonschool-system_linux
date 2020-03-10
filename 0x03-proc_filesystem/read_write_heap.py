@@ -10,11 +10,10 @@ try:
     if len(replace_string) > len(search_string):
         raise IndexError
 except IndexError:
-    print("Usage: <read_write_heap.py> pid search_string replace_string",
-          file=sys.stderr)
+    print("Usage: <read_write_heap.py> pid search_string replace_string")
     exit(1)
 except ValueError:
-    print("PID should be a valid integer greater than 0", file=sys.stderr)
+    print("PID should be a valid integer greater than 0")
     exit(1)
 
 
@@ -51,9 +50,9 @@ except FileNotFoundError as e:
     exit(1)
 
 except ValueError:
-    print("Could not find the string", file=sys.stderr)
+    print("Could not find the string")
     exit(1)
 
 except PermissionError:
-    print("No permission", file=sys.stderr)
+    print("No permission")
     exit(1)
