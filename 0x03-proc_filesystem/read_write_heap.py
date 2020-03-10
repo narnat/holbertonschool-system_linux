@@ -34,8 +34,8 @@ try:
                 props_line["perms"] = tmp[1]
                 break
 
-        if props_line["perms"] != "rw-p":
-            raise PermissionError
+        # if props_line["perms"] != "rw-p":
+        #     raise PermissionError
 
         mem.seek(props_line["start"])
         content = mem.read(props_line["end"] - props_line["start"])
