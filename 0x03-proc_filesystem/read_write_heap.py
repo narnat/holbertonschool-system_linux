@@ -65,19 +65,14 @@ def main():
         exit_value = 0
     except IndexError:
         print("Usage: <read_write_heap.py> pid search_string replace_string")
-        exit(1)
     except ValueError:
         print("PID should be a valid integer greater than 0")
-        exit(1)
     except FileNotFoundError as e:
         print(e)
-        exit(1)
     except ValueError:
         print("Could not find the string")
-        exit(1)
     except PermissionError:
         print("No permission")
-        exit(1)
     finally:
         exit(exit_value)
 
