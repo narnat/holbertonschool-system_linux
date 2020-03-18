@@ -38,7 +38,7 @@ int check_elf(unsigned char *bytes)
 	if (memcmp(header64->e_ident, ELFMAG, SELFMAG) != 0)
 	{
 		fprintf(stderr, "readelf: Error: Not an ELF file - it has"
-			" the wrong magic bytes at the start");
+			" the wrong magic bytes at the start\n");
 		return (1);
 	}
 	return (0);
@@ -470,12 +470,27 @@ int main(int argc, char *argv[])
 {
 	unsigned char bytes[64];
 
-	if (argc != 2 || read_header_bytes(bytes, argv[1]))
+	if (argc != 2)
 	{
+		fprintf(stderr, "readelf: Warning: Nothing to do.\n");
 		fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n");
 		return (EXIT_FAILURE);
 	}
-
+	if (access(argv[1], F_OK) == -1)
+	{
+		fprintf(stderr, "readelf: Error: '%s': No such file\n", argv[1]);
+		return (EXIT_FAILURE);
+	}
+	if (access(argv[1], R_OK) == -1)
+	{
+		fprintf(stderr, "readelf: Error: Input file '%s' is not readable.\n", argv[1]);
+		return (EXIT_FAILURE);
+	}
+	if (read_header_bytes(bytes, argv[1]))
+	{
+		perror("readelf: Error: ");
+		return (EXIT_FAILURE);
+	}
 	if (check_elf(bytes))
 	{
 		return (EXIT_FAILURE);
