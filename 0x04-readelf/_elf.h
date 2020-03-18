@@ -10,4 +10,30 @@
 #include <string.h>
 #include <stdlib.h>
 
+void reverse(unsigned char *bytes, size_t size);
+int read_elf_header_bytes(unsigned char *bytes, const char *filename);
+int check_elf(unsigned char *bytes);
+
+/* Elf Header */
+void print_magic_bytes(unsigned char *bytes);
+void print_class(unsigned char *bytes);
+void print_data(unsigned char *bytes);
+void print_version(unsigned char *bytes);
+void print_osabi(unsigned char *bytes);
+void print_abi_version(unsigned char *bytes);
+void print_type(unsigned char *bytes, int endianess);
+void print_machine(unsigned char *bytes, int endianess);
+void print_file_version(unsigned char *bytes, int endianess);
+void print_entry_point_addr(unsigned char *bytes, int class, int endianess);
+void print_program_headers(unsigned char *bytes, int class, int endianess);
+void print_section_headers(unsigned char *bytes, int class, int endianess);
+void print_flags(unsigned char *bytes, int class, int endianess);
+void print_header_size(unsigned char *bytes, int class, int endianess);
+void print_program_header_size(unsigned char *bytes, int class, int endianess);
+void print_num_program_headers(unsigned char *bytes, int class, int endianess);
+void print_section_hsize(unsigned char *bytes, int class, int endianess);
+void print_num_section_headers(unsigned char *bytes, int class, int endianess);
+void print_string_table_idx(unsigned char *bytes, int class, int endianess);
+/* Elf Header */
+
 #endif /* ELF_H */

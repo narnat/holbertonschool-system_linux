@@ -13,8 +13,9 @@ LINTER = betty
 # It's implicitly compiled
 # %.o: %.c
 # 	$(CC) -c $< $(CFLAGS)
+FILES_0 = 0-hreadelf.o elf_header.o elf_header_2.o elf_header_3.o elf_header_4.o
 
-0-hreadelf: 0-hreadelf.o $(HEADERS)
+0-hreadelf: utils.c $(FILES_0) $(HEADERS)
 
 1-hreadelf: 1-hreadelf.o $(HEADERS)
 
@@ -26,13 +27,3 @@ LINTER = betty
 
 clean:
 	rm -f *.o 0-hreadelf 1-hreadelf 2-hreadelf 100-hreadelf
-
-# Compile and run  command, @ means do not print info
-check:
-	@$(LINTER) *.[ch]
-
-memcheck: all
-	@valgrind ./$(NAME)
-
-memfull: all
-	@valgrind --leak-check=full --track-origins=yes ./$(NAME)
