@@ -114,9 +114,9 @@ void print_section_type(unsigned char *data, int class, int endianess)
 	case SHT_GNU_ATTRIBUTES:
 		str = "GNU_ATTRIBUTES";
 		break;
-	case SHT_X86_64_UNWIND:
-		str = "GNU_X86_64_UNWIND";
-		break;
+		/* case SHT_X86_64_UNWIND: */ /* Won't work with Ubuntu 14*/
+	/* 	str = "GNU_X86_64_UNWIND"; */
+	/* 	break; */
 	case SHT_NULL:
 	default:
 		str = "NULL";
@@ -194,8 +194,8 @@ void print_section_flg(unsigned char *data, int class, int endianess)
 		*start++ = 'G';
 	if (flags & SHF_TLS)
 		*start++ = 'T';
-	if (flags & SHF_COMPRESSED)
-		*start++ = 'C';
+	/* if (flags & SHF_COMPRESSED)  Won't work with Ubuntu 14*/
+	/* 	*start++ = 'C'; */
 	if (flags & SHF_EXCLUDE)
 		*start++ = 'E';
 	printf(" %3s", buf);
