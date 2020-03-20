@@ -37,7 +37,8 @@ void print_string_table_idx(unsigned char *bytes, int class, int endianess);
 /* Elf Header */
 
 /* Elf Section */
-int read_bytes(unsigned char **bytes, const char *filename, size_t offset, size_t size);
+int read_bytes(unsigned char **bytes, const char *filename,
+	       size_t offset, size_t size);
 
 void *get_section_header_off(unsigned char *bytes, int class, int endianess);
 uint16_t get_string_table_idx(unsigned char *bytes, int class, int endianess);
