@@ -77,9 +77,9 @@ int main(int argc, char *argv[])
 
 	if (argc != 2)
 	{
-		fprintf(stderr, "readelf: Warning: Nothing to do.\n");
-		fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n");
-		return (EXIT_FAILURE);
+		/* fprintf(stderr, "readelf: Warning: Nothing to do.\n"); */
+		/* fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n"); */
+		return (EXIT_SUCCESS);
 	}
 	if (access(argv[1], F_OK) == -1)
 	{
@@ -89,7 +89,8 @@ int main(int argc, char *argv[])
 	if (access(argv[1], R_OK) == -1)
 	{
 		fprintf(stderr,
-			"readelf: Error: Input file '%s' is not readable.\n", argv[1]);
+			"readelf: Error: %s: Failed to read file's magic number\n",
+			argv[1]);
 		return (EXIT_FAILURE);
 	}
 	if (read_elf_header_bytes(bytes, argv[1]))

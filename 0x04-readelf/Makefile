@@ -14,11 +14,11 @@ LINTER = betty
 # %.o: %.c
 # 	$(CC) -c $< $(CFLAGS)
 FILES_0 = 0-hreadelf.o elf_header.o elf_header_2.o elf_header_3.o elf_header_4.o
-FILES_1 = 1-hreadelf.o
+FILES_1 = 1-hreadelf.o elf_section.o elf_section_2.o elf_section_3.o
 
 0-hreadelf: utils.c $(FILES_0) $(HEADERS)
 
-1-hreadelf:  utils.c $(FILES_1) $(HEADERS)
+1-hreadelf:  utils_2.c utils.c $(FILES_1) $(HEADERS)
 
 2-hreadelf: 2-hreadelf.o $(HEADERS)
 

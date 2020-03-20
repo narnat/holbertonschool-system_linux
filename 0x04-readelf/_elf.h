@@ -36,4 +36,26 @@ void print_num_section_headers(unsigned char *bytes, int class, int endianess);
 void print_string_table_idx(unsigned char *bytes, int class, int endianess);
 /* Elf Header */
 
+/* Elf Section */
+int read_bytes(unsigned char **bytes, const char *filename, size_t offset, size_t size);
+
+void *get_section_header_off(unsigned char *bytes, int class, int endianess);
+uint16_t get_string_table_idx(unsigned char *bytes, int class, int endianess);
+Elf64_Off get_section_off(unsigned char *data, int class, int endianess);
+uint16_t get_section_hsize(unsigned char *data, int class, int endianess);
+uint64_t get_section_size(unsigned char *bytes, int class, int endianess);
+
+void print_section_header_names(int class);
+void print_section_name(unsigned char *bytes, int class, int endianess,
+			unsigned char *str_table);
+void print_section_type(unsigned char *bytes, int class, int endianess);
+void print_section_addr(unsigned char *bytes, int class, int endianess);
+void print_section_off(unsigned char *bytes, int class, int endianess);
+void print_section_size(unsigned char *bytes, int class, int endianess);
+void print_section_es(unsigned char *bytes, int class, int endianess);
+void print_section_flg(unsigned char *bytes, int class, int endianess);
+void print_section_lk(unsigned char *bytes, int class, int endianess);
+void print_section_inf(unsigned char *bytes, int class, int endianess);
+void print_section_al(unsigned char *bytes, int class, int endianess);
+void print_key_to_flags(int class);
 #endif /* ELF_H */

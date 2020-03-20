@@ -59,3 +59,41 @@ int check_elf(unsigned char *bytes)
 	}
 	return (0);
 }
+
+/**
+ * get_section_header_off - Print section headers
+ * @bytes: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: void pointer to offset
+ */
+void *get_section_header_off(unsigned char *bytes, int class, int endianess)
+{
+	void *header_off = class == ELFCLASS32 ?
+		(void *) &((Elf32_Ehdr *) bytes)->e_shoff :
+		(void *) &((Elf64_Ehdr *) bytes)->e_shoff;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) header_off, class == ELFCLASS32 ? 4 : 8);
+
+	return (header_off);
+}
+
+/**
+ * get_section_off - Get section offset
+ * @bytes: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: section offset
+ */
+Elf64_Off get_section_off(unsigned char *bytes, int class, int endianess)
+{
+	Elf64_Off off = class == ELFCLASS32 ?
+		((Elf32_Shdr *) bytes)->sh_offset :
+		((Elf64_Shdr *) bytes)->sh_offset;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &off, class == ELFCLASS32 ? 4 : 8);
+
+	return (off);
+}
