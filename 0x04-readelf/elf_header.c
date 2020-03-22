@@ -96,7 +96,7 @@ void print_osabi_2(unsigned char osabi)
 		puts("Stand-alone (embedded)");
 		break;
 	default:
-		printf("<unknown: %d>\n", osabi);
+		printf("<unknown: %x>\n", osabi);
 		break;
 	}
 }
