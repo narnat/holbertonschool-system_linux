@@ -1,6 +1,25 @@
 #include "_elf.h"
 
 /**
+ * get_num_section_headers - get number of section headers
+ * @bytes: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: number of section headers
+ */
+uint16_t get_num_section_headers(unsigned char *bytes, int class,
+				 int endianess)
+{
+	uint16_t shnum = class == ELFCLASS32 ?
+		((Elf32_Ehdr *) bytes)->e_shnum :
+		((Elf64_Ehdr *) bytes)->e_shnum;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &shnum, 2);
+	return (shnum);
+}
+
+/**
  * read__bytes - Reads 64 bytes from file and stores in @bytes
  * @bytes: character array
  * @filename: elf file

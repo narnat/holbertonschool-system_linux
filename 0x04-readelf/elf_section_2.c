@@ -1,23 +1,23 @@
 #include "_elf.h"
 
-/**
- * get_num_section_headers - get number of section headers
- * @bytes: character array
- * @class: ELFCLASS32 or ELFCLASS64
- * @endianess: LSB or MSB
- * Return: number of section headers
- */
-uint16_t get_num_section_headers(unsigned char *bytes, int class,
-				 int endianess)
-{
-	uint16_t shnum = class == ELFCLASS32 ?
-		((Elf32_Ehdr *) bytes)->e_shnum :
-		((Elf64_Ehdr *) bytes)->e_shnum;
+/* /\** */
+/*  * get_num_section_headers - get number of section headers */
+/*  * @bytes: character array */
+/*  * @class: ELFCLASS32 or ELFCLASS64 */
+/*  * @endianess: LSB or MSB */
+/*  * Return: number of section headers */
+/*  *\/ */
+/* uint16_t get_num_section_headers(unsigned char *bytes, int class, */
+/* 				 int endianess) */
+/* { */
+/* 	uint16_t shnum = class == ELFCLASS32 ? */
+/* 		((Elf32_Ehdr *) bytes)->e_shnum : */
+/* 		((Elf64_Ehdr *) bytes)->e_shnum; */
 
-	if (endianess == ELFDATA2MSB)
-		reverse((unsigned char *) &shnum, 2);
-	return (shnum);
-}
+/* 	if (endianess == ELFDATA2MSB) */
+/* 		reverse((unsigned char *) &shnum, 2); */
+/* 	return (shnum); */
+/* } */
 
 /**
  * get_section_type_name_2 - get section type name
@@ -50,12 +50,14 @@ static char *get_section_type_name_2(uint32_t type)
 		return ("AUXILIARY");
 	case 0x7fffffff:
 		return ("FILTER");
+	case 0x6ffffff1:
+		return ("LOOS+ffffff1");
+	case 0x6ffffff3:
+		return ("LOOS+ffffff3");
 	case SHT_GNU_LIBLIST:
 		return ("GNU_LIBLIST");
 	case SHT_GNU_ATTRIBUTES:
 		return ("GNU_ATTRIBUTES");
-/* case SHT_X86_64_UNWIND: */ /* Won't work with Ubuntu 14*/
-		/*	return ("GNU_X86_64_UNWIND"; */
 	case SHT_NULL:
 	default:
 		return ("NULL");
