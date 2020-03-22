@@ -20,7 +20,7 @@ FILES_1 = 1-hreadelf.o elf_section.o elf_section_2.o elf_section_3.o
 
 1-hreadelf:  utils_2.c utils.c $(FILES_1) $(HEADERS)
 
-2-hreadelf: 2-hreadelf.o $(HEADERS)
+2-hreadelf: 2-hreadelf.c utils.c elf_section_2.c elf_section_3.c elf_section.c  utils_2.c $(HEADERS)
 
 100-hreadelf: 100-hreadelf.o $(HEADERS)
 

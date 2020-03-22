@@ -198,7 +198,10 @@ int print_pheader_type(unsigned char *pheader, int class, int endianess)
 		str = "GNU_EH_FRAME";
 		break;
 	case PT_GNU_RELRO:
-		str = "RELRO";
+		str = "GNU_RELRO";
+		break;
+	case 0x6464e550:
+		str = "LOOS+464e550";
 		break;
 	case PT_NULL:
 	default:
@@ -242,6 +245,18 @@ void print_pheader_vaddr(unsigned char *pheader, int class, int endianess)
 		reverse((unsigned char *) &vaddr, class == ELFCLASS32 ? 4 : 8);
 
 	printf(" 0x%0*lx", class == ELFCLASS32 ? 8 : 16, vaddr);
+}
+
+Elf64_Off get_pheader_vaddr(unsigned char *pheader, int class, int endianess)
+{
+	Elf64_Off vaddr = class == ELFCLASS32 ?
+		((Elf32_Phdr *) pheader)->p_vaddr :
+		((Elf64_Phdr *) pheader)->p_vaddr;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &vaddr, class == ELFCLASS32 ? 4 : 8);
+
+	return (vaddr);
 }
 
 void print_pheader_paddr(unsigned char *pheader, int class, int endianess)
@@ -330,7 +345,7 @@ void print_pheader_align(unsigned char *pheader, int class, int endianess)
 	if (endianess == ELFDATA2MSB)
 		reverse((unsigned char *) &align, class == ELFCLASS32 ? 4 : 8);
 
-	printf(" 0x%lx\n", align);
+	printf(" %#lx\n", align);
 }
 
 Elf64_Off get_program_offset(unsigned char *pheader, int class, int endianess)
@@ -396,7 +411,8 @@ void get_section_name(unsigned char *data, int class, int endianess,
 	if (endianess == ELFDATA2MSB)
 		reverse((unsigned char *) &name, class == ELFCLASS32 ? 4 : 4);
 
-	printf("%s ", str_table + name);
+	if (*(str_table + name))
+		printf("%s ", str_table + name);
 }
 
 /**
@@ -416,37 +432,55 @@ Elf64_Addr get_section_addr(unsigned char *data, int class, int endianess)
 	return (addr);
 }
 
+/**
+ * get_sh_size - print section size
+ * @data: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
+uint64_t get_sh_size(unsigned char *data, int class, int endianess)
+{
+	uint64_t size = class == ELFCLASS32 ?
+		((Elf32_Shdr *) data)->sh_size :
+		((Elf64_Shdr *) data)->sh_size;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &size, class == ELFCLASS32 ? 4 : 8);
+	return (size);
+}
+
 void print_segment_section_map(unsigned char *pheader, unsigned char *sheader,
 			       unsigned char *strtab, int class, int endianess,
 			       int ph_n, int ph_size, int sh_size, int sh_n)
 {
 	int i, j;
-	uint64_t offset, filesz, sh_addr;
+	uint64_t offset, filesz, sh_off, sh_siz;
 	unsigned char *tmp;
-	printf(" Section to Segment mapping:\n");
+	printf("\n Section to Segment mapping:\n");
 	printf("  Segment Sections...\n");
 	for (i = 0; i < ph_n; ++i, pheader += ph_size)
 	{
 		printf("   %02d     ", i);
-		offset = get_pheader_offset(pheader, class, endianess);
-		filesz = get_pheader_fsize(pheader, class, endianess);
+		offset = get_pheader_vaddr(pheader, class, endianess);
+		filesz = get_pheader_memsz(pheader, class, endianess);
 		tmp = sheader;
-		printf("***************Start section***************\n");
+		/* printf("***************Start section***************\n"); */
 		for (j = 0; j < sh_n; ++j, tmp += sh_size)
 		{
-			sh_addr = get_section_addr(tmp, class, endianess);
-			printf("\nshadr: %lx, off: %lx, filesz: %lx  ", sh_addr, offset, offset + filesz);
-			if (sh_addr >= offset && sh_addr < filesz + offset)
+			sh_off = get_section_addr(tmp, class, endianess);
+			sh_siz = get_sh_size(tmp, class, endianess);
+			/* printf("\nshadr: %lx, off: %lx, filesz: %lx  ", sh_addr, offset, offset + filesz); */
+			if (sh_siz && sh_off >= offset && sh_off < filesz + offset)
 			{
 				get_section_name(tmp, class, endianess, strtab);
 			}
-			if (sh_addr > filesz + offset)
+			if (sh_off > filesz + offset)
 			{
-				printf(" ");
+				/* printf(" "); */
 				break;
 			}
 		}
-		printf("***************END_SECTION***************\n");
+		/* printf("***************END_SECTION***************\n"); */
 		putchar('\n');
 	}
 
@@ -475,7 +509,7 @@ void print_program_header(unsigned char *bytes, char *filename, int class,
 
 	print_type_2(bytes, endianess);
 	print_entry_point_addr_2(bytes, class, endianess);
-	printf("There are %d program headers, starting at offset %lu:\n\n",
+	printf("There are %d program headers, starting at offset %lu\n\n",
 	       n_pheader, ph_offset);
 	print_program_header_string(class);
 
@@ -508,6 +542,20 @@ void print_program_header(unsigned char *bytes, char *filename, int class,
 	free(data);
 	free(str_table);
 	free(pheader);
+}
+
+void check_type(unsigned char *bytes, int endianess)
+{
+	uint16_t type = ((Elf64_Ehdr *) bytes)->e_type;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &type, 2);
+
+	if (type != ET_EXEC && type != ET_DYN)
+	{
+		printf("\nThere are no program headers in this file.\n");
+		exit(EXIT_SUCCESS);
+	}
 }
 
 /**
@@ -547,6 +595,7 @@ int main(int argc, char *argv[])
 	{
 		return (EXIT_FAILURE);
 	}
+	check_type(bytes, bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
 	print_program_header(bytes, argv[1],
 			 bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 			 bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
