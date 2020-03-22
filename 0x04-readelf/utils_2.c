@@ -63,3 +63,21 @@ uint64_t get_section_size(unsigned char *bytes, int class, int endianess)
 
 	return (size);
 }
+
+/**
+ * get_section_hsize - get section size
+ * @bytes: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: section size
+ */
+uint16_t get_section_hsize(unsigned char *bytes, int class, int endianess)
+{
+	uint16_t shentsize = class == ELFCLASS32 ?
+		((Elf32_Ehdr *) bytes)->e_shentsize :
+		((Elf64_Ehdr *) bytes)->e_shentsize;
+
+	if (endianess == ELFDATA2MSB)
+		reverse((unsigned char *) &shentsize, 2);
+	return (shentsize);
+}

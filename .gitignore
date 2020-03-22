@@ -5,3 +5,9 @@ test/
 .bash_history
 ls_test/
 *main*
+\#*
+*.o
+*.txt
+test*
+ELFkickers
+binary-samples

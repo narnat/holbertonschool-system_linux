@@ -45,7 +45,7 @@ void print_entry_point_addr(unsigned char *bytes, int class, int endianess)
 		entry32 = &((Elf32_Ehdr *) bytes)->e_entry;
 		if (endianess == ELFDATA2MSB)
 			reverse((unsigned char *) entry32, 4);
-		printf("%#x\n", *entry32);
+		printf("0x%x\n", *entry32);
 
 	}
 	else
@@ -53,7 +53,7 @@ void print_entry_point_addr(unsigned char *bytes, int class, int endianess)
 		entry64 = &((Elf64_Ehdr *) bytes)->e_entry;
 		if (endianess == ELFDATA2MSB)
 			reverse((unsigned char *) entry64, 8);
-		printf("%#lx\n", *entry64);
+		printf("0x%lx\n", *entry64);
 
 	}
 }

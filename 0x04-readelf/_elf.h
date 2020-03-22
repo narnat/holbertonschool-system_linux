@@ -39,7 +39,8 @@ void print_string_table_idx(unsigned char *bytes, int class, int endianess);
 /* Elf Section */
 int read_bytes(unsigned char **bytes, const char *filename,
 	       size_t offset, size_t size);
-
+uint16_t get_num_section_headers(unsigned char *bytes, int class,
+				 int endianess);
 void *get_section_header_off(unsigned char *bytes, int class, int endianess);
 uint16_t get_string_table_idx(unsigned char *bytes, int class, int endianess);
 Elf64_Off get_section_off(unsigned char *data, int class, int endianess);
@@ -59,4 +60,6 @@ void print_section_lk(unsigned char *bytes, int class, int endianess);
 void print_section_inf(unsigned char *bytes, int class, int endianess);
 void print_section_al(unsigned char *bytes, int class, int endianess);
 void print_key_to_flags(int class);
+/* End Elf Section */
+
 #endif /* ELF_H */

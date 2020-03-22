@@ -48,6 +48,7 @@ def read_write_file(pid, search_string, replace_string):
         mem.seek(props_line["start"])
         content = mem.read(props_line["end"] - props_line["start"])
         idx = content.index(bytes(search_string, "ASCII"))
+        print(content)
         print("[*] Found string")
         print("[*] Replacing string")
         mem.seek(props_line["start"] + idx)
@@ -63,16 +64,18 @@ def main():
         pid, search_string, replace_string = get_args()
         read_write_file(pid, search_string, replace_string)
         exit_value = 0
-    except IndexError:
-        print("Usage: <read_write_heap.py> pid search_string replace_string")
-    except ValueError:
-        print("PID should be a valid integer greater than 0")
-    except FileNotFoundError as e:
+    # except IndexError:
+    #     print("Usage: <read_write_heap.py> pid search_string replace_string")
+    # except ValueError:
+    #     print("PID should be a valid integer greater than 0")
+    # except FileNotFoundError as e:
+    #     print(e)
+    # except ValueError:
+    #     print("Could not find the string")
+    # except PermissionError:
+    #     print("No permission")
+    except Exception as e:
         print(e)
-    except ValueError:
-        print("Could not find the string")
-    except PermissionError:
-        print("No permission")
     finally:
         exit(exit_value)
 
