@@ -18,15 +18,15 @@ asm_strstr:
     push r9
     push rcx
 
-    test rsi, rsi
-    jz end
-    test rdi, rdi
-    jz end
-
     xor rax, rax
     xor rcx, rcx
     xor r8, r8
     xor r9, r9
+
+    test rsi, rsi
+    jz compare
+    test rdi, rdi
+    jz end
 
 strstr_loop:
 
