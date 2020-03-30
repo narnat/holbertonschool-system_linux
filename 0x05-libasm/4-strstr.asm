@@ -25,6 +25,10 @@ asm_strstr:
 
     test rsi, rsi
     jz compare
+
+    mov r9b, BYTE [rsi]
+    test r9b, r9b
+    jz compare
     test rdi, rdi
     jz end
 
