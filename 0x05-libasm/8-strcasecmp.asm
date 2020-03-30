@@ -4,6 +4,10 @@ BITS 64
 
     section .text
 
+    ;; rax(rdi, rsi, rdx, r10, r8, r9)
+    ;; int asm_strcasecmp(const char *s1, const char *s2);
+    ;; @rdi: s1
+    ;; @rsi: s2
 asm_strcasecmp:
 
     push rbp
@@ -23,20 +27,12 @@ loop_strcmp:
     mov r8b, BYTE [rdi + rcx]
     mov r9b, BYTE [rsi + rcx]
 
-    inc rcx
-
     test r8b, r8b
     je end               ; check if @str1 is null
     test r9b, r9b
     je end
 
     jmp convert_case_1
-
-continue:
-
-    cmp r8b, r9b
-    je loop_strcmp              ; check if @str1 and @str2 is equal
-    jmp end
 
 convert_case_1:
 
@@ -57,7 +53,13 @@ convert_case_2:
     jg continue
 
     sub r9b, 32
-    jmp continue
+
+continue:
+
+    inc rcx
+    cmp r8b, r9b
+    je loop_strcmp              ; check if @str1 and @str2 is equal
+    jmp end
 
 end:
 
