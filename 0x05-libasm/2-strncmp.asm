@@ -8,46 +8,54 @@ BITS 64
     ;; int asm_strncmp(const char *s1, const char *s2, size_t n);
     ;; @rdi: s1
     ;; @rsi: s2
-    ;; @n: rdx
+    ;; @rdx: n
 asm_strncmp:
 
     push rbp
     mov rbp, rsi                ; Prologue
 
-    push r8
-    push r9
-
     xor rcx, rcx                ; Set rcx to 0
     xor eax, eax                ; Set eax to 0
-    xor r8d, r8d
-    xor r9d, r9d
 
-loop_strncmp:
-
-    cmp rdx, rcx
-    je end
+loop_strcmp:
 
     mov r8b, BYTE [rdi + rcx]
     mov r9b, BYTE [rsi + rcx]
-
     inc rcx
 
+    cmp rdx, rcx
+    je end_strcmp
     test r8b, r8b
-    jz end               ; check if @str1 is null
+    je check_null               ; check if @str1 is null
+    ;; test r9b, r9b
+    ;; je set_one               ; check if @str2 is null
+    cmp r8b, r9b
+    je loop_strcmp              ; check if @str1 and @str2 is equal
+    jmp compare
+
+check_null:
+
     test r9b, r9b
-    jz end               ; check if @str2 is null
+    je end_strcmp
+    jmp set_negative
+
+compare:
 
     cmp r8b, r9b
-    je loop_strncmp              ; check if @str1 and @str2 is equal
-    jmp end
+    jl set_negative
+    jmp set_one
 
-end:
+set_one:
 
-    mov eax, r8d
-    sub eax, r9d
+    mov eax, 1
+    jmp end_strcmp
 
-    pop r9
-    pop r8
+set_negative:
+
+    mov eax, -1                 ; Set -1 one
+    jmp end_strcmp
+
+end_strcmp:
 
     mov rsi, rbp
     pop rbp
