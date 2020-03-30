@@ -12,7 +12,7 @@ BITS 64
 asm_strncmp:
 
     push rbp
-    mov rbp, rsi                ; Prologue
+    mov rbp, rsp                ; Prologue
 
     xor rcx, rcx                ; Set rcx to 0
     xor eax, eax                ; Set eax to 0
@@ -57,7 +57,7 @@ set_negative:
 
 end_strcmp:
 
-    mov rsi, rbp
+    mov rsp, rbp
     pop rbp
 
     ret
