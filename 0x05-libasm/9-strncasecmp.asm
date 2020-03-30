@@ -28,13 +28,6 @@ loop_strcmp:
     mov r8b, BYTE [rdi + rcx]
     mov r9b, BYTE [rsi + rcx]
 
-    inc rcx
-
-    test r8b, r8b
-    je end               ; check if @str1 is null
-    test r9b, r9b
-    je end
-
     cmp r8b, 65                 ; Check if char is lowercase
     jl convert_case
 
@@ -55,8 +48,16 @@ convert_case:
 
 continue:
 
+    test r8b, r8b
+    je end               ; check if @str1 is null
+    test r9b, r9b
+    je end
+
+    inc rcx
+
     cmp rcx, rdx
     je end
+
     cmp r8b, r9b
     je loop_strcmp              ; check if @str1 and @str2 is equal
     jmp end
