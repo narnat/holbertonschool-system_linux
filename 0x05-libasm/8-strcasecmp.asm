@@ -11,6 +11,8 @@ asm_strcasecmp:
 
     xor rcx, rcx                ; Set rcx to 0
     xor eax, eax                ; Set eax to 0
+    xor r8, r8
+    xor r9, r9
 
 loop_strcmp:
 
@@ -20,10 +22,7 @@ loop_strcmp:
     inc rcx
 
     test r8b, r8b
-    je check_null               ; check if @str1 is null
-
-    test r9b, r9b
-    je set_one               ; check if @str2 is null
+    je end               ; check if @str1 is null
 
     jmp convert_case_1
 
@@ -31,7 +30,7 @@ continue:
 
     cmp r8b, r9b
     je loop_strcmp              ; check if @str1 and @str2 is equal
-    jmp compare
+    jmp end
 
 convert_case_1:
 
@@ -54,29 +53,10 @@ convert_case_2:
     sub r9b, 32
     jmp continue
 
-check_null:
+end:
 
-    test r9b, r9b
-    je end_strcmp
-    jmp set_negative
-
-compare:
-
-    cmp r8b, r9b
-    jl set_negative
-    jmp set_one
-
-set_one:
-
-    mov eax, 1
-    jmp end_strcmp
-
-set_negative:
-
-    mov eax, -1                 ; Set -1 one
-    jmp end_strcmp
-
-end_strcmp:
+    mov eax, r8d
+    sub eax, r9d
 
     mov rsp, rbp
     pop rbp
