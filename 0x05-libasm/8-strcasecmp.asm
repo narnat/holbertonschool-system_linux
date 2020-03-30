@@ -9,10 +9,14 @@ asm_strcasecmp:
     push rbp
     mov rbp, rsp                ; Prologue
 
+    push r8
+    push r9
+    push rcx
+
     xor rcx, rcx                ; Set rcx to 0
     xor eax, eax                ; Set eax to 0
-    xor r8, r8
-    xor r9, r9
+    xor r8d, r8d
+    xor r9d, r9d
 
 loop_strcmp:
 
@@ -23,6 +27,8 @@ loop_strcmp:
 
     test r8b, r8b
     je end               ; check if @str1 is null
+    test r9b, r9b
+    je end
 
     jmp convert_case_1
 
@@ -57,6 +63,10 @@ end:
 
     mov eax, r8d
     sub eax, r9d
+
+    pop rcx
+    pop r9
+    pop r8
 
     mov rsp, rbp
     pop rbp
