@@ -35,7 +35,23 @@ loop_strcmp:
     test r9b, r9b
     je end
 
-    jmp convert_case_1
+    cmp r8b, 65                 ; Check if char is lowercase
+    jl convert_case
+
+    cmp r8b, 90
+    jg convert_case
+
+    add r8b, 32
+
+convert_case:
+
+    cmp r9b, 65                 ; Check if char is lowercase
+    jl continue
+
+    cmp r9b, 90
+    jg continue
+
+    add r9b, 32
 
 continue:
 
@@ -44,27 +60,6 @@ continue:
     cmp r8b, r9b
     je loop_strcmp              ; check if @str1 and @str2 is equal
     jmp end
-
-convert_case_1:
-
-    cmp r8b, 97                 ; Check if char is lowercase
-    jl convert_case_2
-
-    cmp r8b, 122
-    jg convert_case_2
-
-    sub r8b, 32
-
-convert_case_2:
-
-    cmp r9b, 97                 ; Check if char is lowercase
-    jl continue
-
-    cmp r9b, 122
-    jg continue
-
-    sub r9b, 32
-    jmp continue
 
 end:
 

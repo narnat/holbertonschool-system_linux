@@ -30,14 +30,14 @@ loop_strcmp:
     ;; jmp convert_case_1
 
     cmp r8b, 65                 ; Check if char is lowercase
-    jl convert_case_2
+    jl convert_case
 
     cmp r8b, 90
-    jg convert_case_2
+    jg convert_case
 
     add r8b, 32
 
-convert_case_2:
+convert_case:
 
     cmp r9b, 65                 ; Check if char is lowercase
     jl continue
