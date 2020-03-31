@@ -40,6 +40,8 @@ strstr_loop:
     test r8b, r8b
     jz compare
 
+    test r9b, r9b
+    jz compare
     cmp r8b, r9b
     je equal
 
