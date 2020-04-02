@@ -1,40 +1,6 @@
 #include "_elf.h"
 
 /**
- * print_section_header_loop - Print info about section headers, loop part
- * @bytes: character array
- * @class: ELFCLASS32 or ELFCLASS64
- * @endianess: LSB or MSB
- * @n_sections: number of sections
- * @header_size: size of section header
- * @str_table: string table section, .shtstrtab
- */
-void print_section_header_loop(unsigned char *bytes, int class, int endianess,
-			       int n_sections, int header_size, unsigned char *str_table)
-{
-	int i;
-
-	print_section_header_names(class);
-
-	for (i = 0; i < n_sections; ++i, bytes += header_size)
-	{
-		printf("  [%2d] ", i);
-		print_section_name(bytes, class, endianess, str_table);
-		print_section_type(bytes, class, endianess);
-		print_section_addr(bytes, class, endianess);
-		print_section_off(bytes, class, endianess);
-		print_section_size(bytes, class, endianess);
-		print_section_es(bytes, class, endianess);
-		print_section_flg(bytes, class, endianess);
-		print_section_lk(bytes, class, endianess);
-		print_section_inf(bytes, class, endianess);
-		print_section_al(bytes, class, endianess);
-	}
-
-	print_key_to_flags(class);
-}
-
-/**
  * print_type_2 - Print elf type
  * @bytes: character array
  * @endianess: LSB or MSB
@@ -506,14 +472,14 @@ void print_pheader_loop(unsigned char *pheader, int class, int endianess,
 }
 
 /**
- * print_section_name - print section name
+ * print_section_name_2 - print section name
  * @data: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
  * @str_table: string table
  */
-void print_section_name(unsigned char *data, int class, int endianess,
-			unsigned char *str_table)
+void print_section_name_2(unsigned char *data, int class, int endianess,
+			  unsigned char *str_table)
 {
 	uint32_t name = class == ELFCLASS32 ?
 		((Elf32_Shdr *) data)->sh_name :
@@ -595,7 +561,7 @@ void print_segment_section_map(unsigned char *pheader, unsigned char *sheader,
 			sh_off = get_section_addr(tmp, class, endianess);
 			sh_siz = get_sh_size(tmp, class, endianess);
 			if (sh_siz && sh_off >= offset && sh_off < filesz + offset)
-				print_section_name(tmp, class, endianess, strtab);
+				print_section_name_2(tmp, class, endianess, strtab);
 			if (sh_off > filesz + offset)
 				break;
 		}
