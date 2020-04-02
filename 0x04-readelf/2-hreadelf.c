@@ -35,7 +35,7 @@ void print_section_header_loop(unsigned char *bytes, int class, int endianess,
 }
 
 /**
- * print_type - Print elf type
+ * print_type_2 - Print elf type
  * @bytes: character array
  * @endianess: LSB or MSB
  */
@@ -70,7 +70,7 @@ void print_type_2(unsigned char *bytes, int endianess)
 }
 
 /**
- * print_entry_point_addr - Print entry point address
+ * print_entry_point_addr_2 - Print entry point address
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
@@ -100,10 +100,11 @@ void print_entry_point_addr_2(unsigned char *bytes, int class, int endianess)
 }
 
 /**
- * print_program_headers - Print program headers
+ * get_ph_offset - Get program header offset
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: return offset
  */
 Elf64_Off get_ph_offset(unsigned char *bytes, int class, int endianess)
 {
@@ -117,12 +118,14 @@ Elf64_Off get_ph_offset(unsigned char *bytes, int class, int endianess)
 }
 
 /**
- * print_program_header_size - Print program_header_size
+ * get_program_header_size - Get program_header_size
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: program header size
  */
-uint16_t get_program_header_size(unsigned char *bytes, int class, int endianess)
+uint16_t get_program_header_size(unsigned char *bytes,
+				 int class, int endianess)
 {
 	uint16_t phentsize = class == ELFCLASS32 ?
 		((Elf32_Ehdr *) bytes)->e_phentsize :
@@ -134,12 +137,14 @@ uint16_t get_program_header_size(unsigned char *bytes, int class, int endianess)
 }
 
 /**
- * print_num_program_headers - Print num_program_headers
+ * get_num_program_headers - Get number of program headers
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: number of program headers
  */
-uint16_t get_num_program_headers(unsigned char *bytes, int class, int endianess)
+uint16_t get_num_program_headers(unsigned char *bytes,
+				 int class, int endianess)
 {
 	uint16_t phnum = class == ELFCLASS32 ?
 		((Elf32_Ehdr *) bytes)->e_phnum :
@@ -150,6 +155,10 @@ uint16_t get_num_program_headers(unsigned char *bytes, int class, int endianess)
 	return (phnum);
 }
 
+/**
+ * print_program_header_string - print header string
+ * @class: ELFCLASS32 or ELFCLASS64
+ */
 void print_program_header_string(int class)
 {
 	printf("Program Headers:\n");
@@ -160,6 +169,45 @@ void print_program_header_string(int class)
 		printf("           PhysAddr           FileSiz  MemSiz   Flg Align\n");
 }
 
+
+/**
+ * get_pheader_type - Get pheader type
+ * @type: Type of header
+ * Return: Type
+*/
+static char *get_pheader_type(uint32_t type)
+{
+	switch (type)
+	{
+	case PT_LOAD:
+		return ("LOAD");
+	case PT_DYNAMIC:
+		return ("DYNAMIC");
+	case PT_NOTE:
+		return ("NOTE");
+	case PT_SHLIB:
+		return ("SHLIB");
+	case PT_PHDR:
+		return ("PHDR");
+	case PT_GNU_STACK:
+		return ("GNU_STACK");
+	case PT_GNU_EH_FRAME:
+		return ("GNU_EH_FRAME");
+	case PT_GNU_RELRO:
+		return ("GNU_RELRO");
+	case 0x6464e550:
+		return ("LOOS+464e550");
+	}
+	return ("NULL");
+}
+
+/**
+ * print_pheader_type - Get number of program headers
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: number of program headers
+ */
 int print_pheader_type(unsigned char *pheader, int class, int endianess)
 {
 	uint32_t type = class == ELFCLASS32 ?
@@ -167,50 +215,26 @@ int print_pheader_type(unsigned char *pheader, int class, int endianess)
 		((Elf64_Phdr *) pheader)->p_type;
 	char *str;
 	int is_interp = 0;
+
 	if (endianess == ELFDATA2MSB)
 		reverse((unsigned char *) &type, 4);
 
-	switch (type)
+	str = get_pheader_type(type);
+	if (type == PT_INTERP)
 	{
-	case PT_LOAD:
-		str = "LOAD";
-		break;
-	case PT_DYNAMIC:
-		str = "DYNAMIC";
-		break;
-	case PT_INTERP:
 		str = "INTERP";
 		is_interp = 1;
-		break;
-	case PT_NOTE:
-		str = "NOTE";
-		break;
-	case PT_SHLIB:
-		str = "SHLIB";
-		break;
-	case PT_PHDR:
-		str = "PHDR";
-		break;
-	case PT_GNU_STACK:
-		str = "GNU_STACK";
-		break;
-	case PT_GNU_EH_FRAME:
-		str = "GNU_EH_FRAME";
-		break;
-	case PT_GNU_RELRO:
-		str = "GNU_RELRO";
-		break;
-	case 0x6464e550:
-		str = "LOOS+464e550";
-		break;
-	case PT_NULL:
-	default:
-		str = "NULL";
 	}
 	printf("  %-14s", str);
 	return (is_interp);
 }
 
+/**
+ * print_pheader_offset - Print pheader offset
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_offset(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off offset = class == ELFCLASS32 ?
@@ -223,6 +247,13 @@ void print_pheader_offset(unsigned char *pheader, int class, int endianess)
 	printf(" 0x%06lx", offset);
 }
 
+/**
+ * get_pheader_offset - Get number pheadr offset
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: pheader offset
+ */
 Elf64_Off get_pheader_offset(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off offset = class == ELFCLASS32 ?
@@ -235,6 +266,12 @@ Elf64_Off get_pheader_offset(unsigned char *pheader, int class, int endianess)
 	return (offset);
 }
 
+/**
+ * print_pheader_vaddr - Print pheader vaddr
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_vaddr(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off vaddr = class == ELFCLASS32 ?
@@ -247,6 +284,13 @@ void print_pheader_vaddr(unsigned char *pheader, int class, int endianess)
 	printf(" 0x%0*lx", class == ELFCLASS32 ? 8 : 16, vaddr);
 }
 
+/**
+ * get_pheader_vaddr - Get pheader vaddr
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: vaddr
+ */
 Elf64_Off get_pheader_vaddr(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off vaddr = class == ELFCLASS32 ?
@@ -259,6 +303,12 @@ Elf64_Off get_pheader_vaddr(unsigned char *pheader, int class, int endianess)
 	return (vaddr);
 }
 
+/**
+ * print_pheader_paddr - Print pheader paddr
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_paddr(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off paddr = class == ELFCLASS32 ?
@@ -271,6 +321,12 @@ void print_pheader_paddr(unsigned char *pheader, int class, int endianess)
 	printf(" 0x%0*lx", class == ELFCLASS32 ? 8 : 16, paddr);
 }
 
+/**
+ * print_pheader_fsize - Print pheader fsize
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_fsize(unsigned char *pheader, int class, int endianess)
 {
 	uint64_t filesz = class == ELFCLASS32 ?
@@ -283,6 +339,13 @@ void print_pheader_fsize(unsigned char *pheader, int class, int endianess)
 	printf(" 0x%0*lx", class == ELFCLASS32 ? 5 : 6, filesz);
 }
 
+/**
+ * get_pheader_fsize - Get pheader fsize
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: fsize
+ */
 uint64_t get_pheader_fsize(unsigned char *pheader, int class, int endianess)
 {
 	uint64_t filesz = class == ELFCLASS32 ?
@@ -295,6 +358,13 @@ uint64_t get_pheader_fsize(unsigned char *pheader, int class, int endianess)
 	return (filesz);
 }
 
+/**
+ * get_pheader_memsz - Get pheader memsize
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: memsz
+ */
 uint64_t get_pheader_memsz(unsigned char *pheader, int class, int endianess)
 {
 	uint64_t memsz = class == ELFCLASS32 ?
@@ -307,6 +377,12 @@ uint64_t get_pheader_memsz(unsigned char *pheader, int class, int endianess)
 	return (memsz);
 }
 
+/**
+ * print_pheader_msize - Print pheader msize
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_msize(unsigned char *pheader, int class, int endianess)
 {
 	uint64_t memsz = class == ELFCLASS32 ?
@@ -319,6 +395,12 @@ void print_pheader_msize(unsigned char *pheader, int class, int endianess)
 	printf(" 0x%0*lx", class == ELFCLASS32 ? 5 : 6, memsz);
 }
 
+/**
+ * print_pheader_flg - Print pheader flg
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_flg(unsigned char *pheader, int class, int endianess)
 {
 	uint32_t flags = class == ELFCLASS32 ?
@@ -336,6 +418,12 @@ void print_pheader_flg(unsigned char *pheader, int class, int endianess)
 	printf(" %s", str);
 }
 
+/**
+ * print_pheader_align - Print pheader align
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ */
 void print_pheader_align(unsigned char *pheader, int class, int endianess)
 {
 	uint64_t align = class == ELFCLASS32 ?
@@ -348,6 +436,13 @@ void print_pheader_align(unsigned char *pheader, int class, int endianess)
 	printf(" %#lx\n", align);
 }
 
+/**
+ * get_program_offset - Get pheadr offset
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * Return: offset
+ */
 Elf64_Off get_program_offset(unsigned char *pheader, int class, int endianess)
 {
 	Elf64_Off offset = class == ELFCLASS32 ?
@@ -360,6 +455,13 @@ Elf64_Off get_program_offset(unsigned char *pheader, int class, int endianess)
 	return (offset);
 }
 
+/**
+ * print_interpreter - Print interpreter
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * @filename: elf file
+ */
 void print_interpreter(unsigned char *pheader, int class, int endianess,
 		       char *filename)
 {
@@ -372,6 +474,15 @@ void print_interpreter(unsigned char *pheader, int class, int endianess,
 	free(interp);
 }
 
+/**
+ * print_pheader_loop- Print all pheadr info
+ * @pheader: character array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * @n_pheader: number of Phdr
+ * @header_size: size of Phdr
+ * @filename: elf file
+ */
 void print_pheader_loop(unsigned char *pheader, int class, int endianess,
 			uint16_t n_pheader, uint16_t header_size, char *filename)
 {
@@ -401,7 +512,7 @@ void print_pheader_loop(unsigned char *pheader, int class, int endianess,
  * @endianess: LSB or MSB
  * @str_table: string table
  */
-void get_section_name(unsigned char *data, int class, int endianess,
+void print_section_name(unsigned char *data, int class, int endianess,
 			unsigned char *str_table)
 {
 	uint32_t name = class == ELFCLASS32 ?
@@ -416,10 +527,11 @@ void get_section_name(unsigned char *data, int class, int endianess,
 }
 
 /**
- * get_section_addr - print section addr
+ * get_section_addr - get section addr
  * @data: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: section addr
  */
 Elf64_Addr get_section_addr(unsigned char *data, int class, int endianess)
 {
@@ -437,6 +549,7 @@ Elf64_Addr get_section_addr(unsigned char *data, int class, int endianess)
  * @data: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: section header size
  */
 uint64_t get_sh_size(unsigned char *data, int class, int endianess)
 {
@@ -449,6 +562,18 @@ uint64_t get_sh_size(unsigned char *data, int class, int endianess)
 	return (size);
 }
 
+/**
+ * print_segment_section_map - Print section mapping
+ * @pheader: Character array
+ * @sheader: Section header array
+ * @strtab: String table array
+ * @class: ELFCLASS32 or ELFCLASS64
+ * @endianess: LSB or MSB
+ * @ph_n: Number of Phdr
+ * @ph_size: Size of Phdr
+ * @sh_size: Size of Shdr
+ * @sh_n: Number of Shdr
+ */
 void print_segment_section_map(unsigned char *pheader, unsigned char *sheader,
 			       unsigned char *strtab, int class, int endianess,
 			       int ph_n, int ph_size, int sh_size, int sh_n)
@@ -456,6 +581,7 @@ void print_segment_section_map(unsigned char *pheader, unsigned char *sheader,
 	int i, j;
 	uint64_t offset, filesz, sh_off, sh_siz;
 	unsigned char *tmp;
+
 	printf("\n Section to Segment mapping:\n");
 	printf("  Segment Sections...\n");
 	for (i = 0; i < ph_n; ++i, pheader += ph_size)
@@ -464,23 +590,15 @@ void print_segment_section_map(unsigned char *pheader, unsigned char *sheader,
 		offset = get_pheader_vaddr(pheader, class, endianess);
 		filesz = get_pheader_memsz(pheader, class, endianess);
 		tmp = sheader;
-		/* printf("***************Start section***************\n"); */
 		for (j = 0; j < sh_n; ++j, tmp += sh_size)
 		{
 			sh_off = get_section_addr(tmp, class, endianess);
 			sh_siz = get_sh_size(tmp, class, endianess);
-			/* printf("\nshadr: %lx, off: %lx, filesz: %lx  ", sh_addr, offset, offset + filesz); */
 			if (sh_siz && sh_off >= offset && sh_off < filesz + offset)
-			{
-				get_section_name(tmp, class, endianess, strtab);
-			}
+				print_section_name(tmp, class, endianess, strtab);
 			if (sh_off > filesz + offset)
-			{
-				/* printf(" "); */
 				break;
-			}
 		}
-		/* printf("***************END_SECTION***************\n"); */
 		putchar('\n');
 	}
 
@@ -512,22 +630,16 @@ void print_program_header(unsigned char *bytes, char *filename, int class,
 	printf("There are %d program headers, starting at offset %lu\n\n",
 	       n_pheader, ph_offset);
 	print_program_header_string(class);
-
 	if (read_bytes(&data, filename, offset, n_sections * header_size))
-	{
 		exit(EXIT_FAILURE);
-	}
-
 	shstrndx = get_string_table_idx(bytes, class, endianess);
 	s_off = get_section_off(data + (shstrndx * header_size), class, endianess);
 	s_size = get_section_size(data + (shstrndx * header_size), class, endianess);
-
 	if (read_bytes(&str_table, filename, s_off, s_size))
 	{
 		free(data);
 		exit(EXIT_FAILURE);
 	}
-
 	if (read_bytes(&pheader, filename, ph_offset, n_pheader * pheader_size))
 	{
 		free(data);
@@ -536,7 +648,6 @@ void print_program_header(unsigned char *bytes, char *filename, int class,
 	}
 	print_pheader_loop(pheader, class, endianess, n_pheader,
 			   pheader_size, filename);
-
 	print_segment_section_map(pheader, data, str_table, class, endianess,
 				  n_pheader, pheader_size, header_size, n_sections);
 	free(data);
@@ -544,6 +655,11 @@ void print_program_header(unsigned char *bytes, char *filename, int class,
 	free(pheader);
 }
 
+/**
+ * check_type - Check elf type
+ * @bytes: character array
+ * @endianess: LSB or MSB
+ */
 void check_type(unsigned char *bytes, int endianess)
 {
 	uint16_t type = ((Elf64_Ehdr *) bytes)->e_type;
@@ -569,11 +685,7 @@ int main(int argc, char *argv[])
 	unsigned char bytes[64];
 
 	if (argc != 2)
-	{
-		/* fprintf(stderr, "readelf: Warning: Nothing to do.\n"); */
-		/* fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n"); */
 		return (EXIT_SUCCESS);
-	}
 	if (access(argv[1], F_OK) == -1)
 	{
 		fprintf(stderr, "readelf: Error: '%s': No such file\n", argv[1]);
@@ -592,9 +704,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 	if (check_elf(bytes))
-	{
 		return (EXIT_FAILURE);
-	}
 	check_type(bytes, bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
 	print_program_header(bytes, argv[1],
 			 bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
