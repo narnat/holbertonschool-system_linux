@@ -62,4 +62,40 @@ void print_section_al(unsigned char *bytes, int class, int endianess);
 void print_key_to_flags(int class);
 /* End Elf Section */
 
+/* Elf program header*/
+
+void print_type_2(unsigned char *bytes, int endianess);
+uint16_t get_num_program_headers(unsigned char *bytes,
+				 int class, int endianess);
+void print_entry_point_addr_2(unsigned char *bytes, int class, int endianess);
+uint16_t get_program_header_size(unsigned char *bytes,
+				 int class, int endianess);
+Elf64_Off get_ph_offset(unsigned char *bytes, int class, int endianess);
+
+void print_program_header_string(int class);
+int print_pheader_type(unsigned char *pheader, int class, int endianess);
+void print_pheader_offset(unsigned char *pheader, int class, int endianess);
+Elf64_Off get_pheader_offset(unsigned char *pheader, int class, int endianess);
+
+void print_pheader_vaddr(unsigned char *pheader, int class, int endianess);
+Elf64_Off get_pheader_vaddr(unsigned char *pheader, int class, int endianess);
+void print_pheader_paddr(unsigned char *pheader, int class, int endianess);
+void print_pheader_fsize(unsigned char *pheader, int class, int endianess);
+uint64_t get_pheader_fsize(unsigned char *pheader, int class, int endianess);
+
+uint64_t get_pheader_memsz(unsigned char *pheader, int class, int endianess);
+void print_pheader_msize(unsigned char *pheader, int class, int endianess);
+void print_pheader_flg(unsigned char *pheader, int class, int endianess);
+void print_pheader_align(unsigned char *pheader, int class, int endianess);
+Elf64_Off get_program_offset(unsigned char *pheader, int class, int endianess);
+
+void print_pheader_loop(unsigned char *pheader, int class, int endianess,
+			uint16_t n_pheader, uint16_t header_size, char *filename);
+void print_section_name_2(unsigned char *data, int class, int endianess,
+			  unsigned char *str_table);
+Elf64_Addr get_section_addr(unsigned char *data, int class, int endianess);
+uint64_t get_sh_size(unsigned char *data, int class, int endianess);
+
+/* End Elf program header*/
+
 #endif /* ELF_H */
