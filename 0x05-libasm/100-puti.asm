@@ -80,7 +80,7 @@ print:
     mov rsi, r8
     mov rdi, 1                  ; stdout
     mov rdx, rcx
-    syscall
+
 
 end:
 
