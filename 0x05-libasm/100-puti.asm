@@ -8,6 +8,7 @@ section .bss
 
     buf     resb 12             ; Charcter array with 11 bytes
 
+extern asm_putc
 global asm_puti
 
 section .text
@@ -73,16 +74,24 @@ check_sign:
     mov BYTE [r8 + r10], '-'     ; Put '-' sign
     inc rcx
 
-print:
+print:                          ; Better to call write function once, but requirements don't allow it
 
-    mov rax, 1
     lea r8, [r8 + r10]
-    mov rsi, r8
-    mov rdi, 1                  ; stdout
-    mov rdx, rcx
+    xor r9, r9                  ; Reuse for indexing @r8
 
+print_loop:
+
+    mov dl, BYTE [r8 + r9]
+    test dl, dl
+    jz end
+    movzx rdi, dl
+    call asm_putc
+    inc r9
+    jmp print_loop
 
 end:
+
+    mov rax, r9
 
     pop rbx
     pop rsi

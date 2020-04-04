@@ -7,23 +7,25 @@ BITS 64
 asm_putc:
 
     push rbp                        ; prologue
-    mov rbp, rsi
+    mov rbp, rsp
 
     push rsi
     push rdx
+    push rdi
 
     mov rax, 1                  ; write syscall
-    mov [rsi], rdi              ; Character
+    mov rsi, rsp                ; Character
     mov rdi, 1                  ; stdout
     mov rdx, 1                  ; one byte
     syscall
 
 end:
 
+    pop rdi
     pop rdx
     pop rsi
 
-    mov rsi, rbp                    ; epilogue
+    mov rsp, rbp                    ; epilogue
     pop rbp
 
     ret
