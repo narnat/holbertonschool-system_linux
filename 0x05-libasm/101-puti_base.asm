@@ -37,7 +37,7 @@ asm_puti_base:
     mov rdi, r9
     call asm_strlen
     cmp eax, 2
-    jl end
+    jl print
     mov rbx, rax                  ; Base
     mov rdi, rcx
 
@@ -82,7 +82,6 @@ print:                          ; Better to call write function once, but requir
 
     lea r8, [r8 + r10]
     xor r9, r9                  ; Reuse for indexing @r8
-    push rcx
 
 print_loop:
 
@@ -96,7 +95,7 @@ print_loop:
 
 end:
 
-    mov rax, rsp
+    mov rax, r9
 
     pop rcx                     ; Attention!
     pop rbx
