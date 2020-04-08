@@ -1,7 +1,10 @@
 #ifndef SIGNALS_H
 #define SIGNALS_H
+
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define UNUSED(x) (void)(x)
 
