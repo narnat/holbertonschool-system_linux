@@ -16,6 +16,6 @@ void signal_handler(int signum)
 int handle_signal(void)
 {
 	if (signal(SIGINT, signal_handler) == SIG_ERR)
-		return (1);
+		return (-1);
 	return (0);
 }
