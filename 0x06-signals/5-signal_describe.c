@@ -1,7 +1,7 @@
 #include "signals.h"
 
 /**
- * main - Entry point
+ * main - program to print info
  * @argc: argument count
  * @argv: Argument vector
  * Return: EXIT_SUCCESS or EXIT_FAILURE
