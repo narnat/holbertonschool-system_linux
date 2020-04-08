@@ -4,19 +4,20 @@
  * signal_handler - Action to take in case signal
  * @signum: Signal number
  * Return: 0 on success, or -1 on error
-*/
+ */
 void signal_handler(int signum)
 {
 	printf("Gotcha! [%d]\n", signum);
 }
 
 /**
- * handle_signal - handles SIGINT signal
+ * handle_sigaction - handles SIGINT signal
  * Return: 0 on success, or -1 on error
 */
-int handle_signal(void)
+int handle_sigaction(void)
 {
-	if (signal(SIGINT, signal_handler) == SIG_ERR)
-		return (-1);
-	return (0);
+	struct sigaction sig;
+
+	sig.sa_handler = signal_handler;
+	return (sigaction(SIGINT, &sig, NULL));
 }
