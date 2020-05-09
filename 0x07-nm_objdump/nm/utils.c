@@ -53,8 +53,6 @@ int check_elf(unsigned char *bytes)
 
 	if (memcmp(header64->e_ident, ELFMAG, SELFMAG) != 0)
 	{
-		fprintf(stderr,  "readelf: Error: Not an ELF file - it has");
-		fprintf(stderr, " the wrong magic bytes at the start\n");
 		return (1);
 	}
 	return (0);

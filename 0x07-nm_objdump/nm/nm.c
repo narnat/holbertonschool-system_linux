@@ -155,11 +155,17 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "nm: '%s': No such file\n", argv[1]);
 		return (EXIT_FAILURE);
 	}
-	if (access(argv[1], R_OK) == -1 || read_elf_header_bytes(bytes, argv[1])
-		|| check_elf(bytes))
+	if (access(argv[1], R_OK) == -1 || read_elf_header_bytes(bytes, argv[1]))
 	{
 		return (EXIT_FAILURE);
 	}
+
+	if (check_elf(bytes))
+	{
+		fprintf(stderr, "nm: %s: File format not recognized\n", argv[1]);
+		return (EXIT_FAILURE);
+	}
+
 	print_symbol_table(bytes, argv[1],
 					   bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 					   bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
