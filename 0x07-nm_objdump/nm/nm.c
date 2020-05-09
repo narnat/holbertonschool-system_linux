@@ -75,6 +75,9 @@ void print_symbol_table_entries(unsigned char *sym_table, int class,
 		c = get_sym_type(sym_table, class, endianess, sh_headers + shndx * sh_size);
 		printf("%c %s\n", c, str_table + name_idx);
 	}
+	free(sym_table - i * sh_ent_size);
+	free(sh_headers);
+	free(str_table);
 }
 
 /**
@@ -115,7 +118,7 @@ void print_symbol_table(unsigned char *bytes, char *filename, int class,
 		sh_esize = get_section_es(sh_headers + (sym * sh_size), class, endianess);
 		if (read_bytes(&sym_table, filename, s_off, s_size))
 		{
-			free(sh_headers);
+			free(sh_headers), free(str_table);
 			exit(EXIT_FAILURE);
 		}
 		print_symbol_table_entries(sym_table, class, endianess, str_table,
@@ -138,12 +141,15 @@ void print_symbol_table(unsigned char *bytes, char *filename, int class,
 int main(int argc, char *argv[])
 {
 	unsigned char bytes[64];
+	char *def = "a.out";
 
-	if (argc != 2)
-	{
-		fprintf(stderr, "hnm [objfile ...]\n");
-		return (EXIT_SUCCESS);
-	}
+	/* if (argc != 2) */
+	/* { */
+	/*	fprintf(stderr, "hnm [objfile ...]\n"); */
+	/*	return (EXIT_SUCCESS); */
+	/* } */
+	if (argc < 2)
+		argv[1] = def;
 	if (access(argv[1], F_OK) == -1)
 	{
 		fprintf(stderr, "nm: '%s': No such file\n", argv[1]);
