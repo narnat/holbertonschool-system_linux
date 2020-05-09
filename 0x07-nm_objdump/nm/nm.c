@@ -155,8 +155,12 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "nm: '%s': No such file\n", argv[1]);
 		return (EXIT_FAILURE);
 	}
-	if (access(argv[1], R_OK) == -1 || read_elf_header_bytes(bytes, argv[1]))
+
+	if (read_elf_header_bytes(bytes, argv[1]))
+		return (EXIT_FAILURE);
+	if (access(argv[1], R_OK) == -1)
 	{
+		fprintf(stderr, "nm: %s: Permission denied\n", argv[1]);
 		return (EXIT_FAILURE);
 	}
 
