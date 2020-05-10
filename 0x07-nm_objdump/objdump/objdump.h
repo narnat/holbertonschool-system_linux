@@ -77,5 +77,5 @@ int skip_section(elf_t *elf, void *shdr);
 int init_elf(elf_t *elf);
 void objdump(elf_t *elf);
 void print_sections(elf_t *elf, uint8_t *str_tab);
-
+int get_width(uint64_t start, uint64_t size);
 #endif /* OBJDUMP_H */

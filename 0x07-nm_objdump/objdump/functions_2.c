@@ -100,9 +100,11 @@ int skip_section(elf_t *elf, void *shdr)
 	CONVERT(elf->data, type, elf->cls, 4, 4);
 
 	if ((type != SHT_NULL && size != 0 && type != SHT_NOBITS &&
-		 type != SHT_SYMTAB && type != SHT_STRTAB && type != SHT_RELA) ||
+		 type != SHT_SYMTAB && type != SHT_STRTAB &&
+		 type != SHT_RELA && type != SHT_REL) ||
 		(type == SHT_STRTAB && (flags & SHF_ALLOC)) ||
-		(type == SHT_RELA && (flags & SHF_ALLOC)))
+		(type == SHT_RELA && (flags & SHF_ALLOC)) ||
+		(type == SHT_REL && (flags & SHF_ALLOC)))
 		return (0);
 	return (1);
 }

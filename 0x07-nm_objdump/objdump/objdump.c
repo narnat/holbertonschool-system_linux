@@ -1,6 +1,26 @@
 #include "objdump.h"
 
 /**
+ * objdump - objdump -sf like printing
+ * @elf: elf sections
+ */
+void objdump(elf_t *elf)
+{
+	uint8_t *sh_strtab;
+	uint16_t indx, sh_size = elf->shdr.entsize;
+	Elf64_Off str_off;
+
+	indx = GET_EHDR(elf->cls, elf->ehdr, e_shstrndx);
+	CONVERT(elf->data, indx, elf->cls, 2, 2);
+	str_off = GET_SHDR(elf->cls, ((uint8_t *)(elf->shdr.addr) + sh_size * indx),
+					   sh_offset);
+	CONVERT(elf->data, str_off, elf->cls, 4, 8);
+	sh_strtab = (uint8_t *)(elf->ehdr) + str_off;
+	print_file_headers(elf);
+	print_sections(elf, sh_strtab);
+}
+
+/**
  * reverse - Reverse char array, used to go from MSB -> LSB
  * @bytes: character array
  * @size: size of @bytes

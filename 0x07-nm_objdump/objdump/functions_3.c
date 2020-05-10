@@ -1,4 +1,5 @@
 #include "objdump.h"
+#include <stdint.h>
 
 /**
  * print_hex - Print hex of sections
@@ -49,6 +50,22 @@ void print_ascii(uint8_t *bytes, uint64_t printed, uint64_t size)
 }
 
 /**
+ * get_width - get address width in hex, for padding
+ * @start: start address of section
+ * @size: size of the section
+ * Return: address width
+ */
+int get_width(uint64_t start, uint64_t size)
+{
+	uint64_t hex = 0x1000;
+	int width = 4;
+
+	for (hex = 0x10000; hex <= start + size; hex *= 0x10)
+		++width;
+	return (width);
+}
+
+/**
  * print_bytes - Print section bytes, objdump -s
  * @elf: elf headers
  * @shdr: nth section header
@@ -56,6 +73,7 @@ void print_ascii(uint8_t *bytes, uint64_t printed, uint64_t size)
 void print_bytes(elf_t *elf, void *shdr)
 {
 	uint64_t size, offset, addr, aligned_size, i;
+	int width;
 
 	size = GET_SHDR(elf->cls, shdr, sh_size);
 	offset = GET_SHDR(elf->cls, shdr, sh_offset);
@@ -68,9 +86,10 @@ void print_bytes(elf_t *elf, void *shdr)
 	else
 		aligned_size = size;
 
+	width = get_width(addr, aligned_size);
 	for (i = 0; i < aligned_size; i += ALIGNMENT)
 	{
-		printf(" %04lx", addr + i);
+		printf(" %0*lx", width, addr + i);
 		print_hex((uint8_t *)(elf->ehdr) + offset, i, size);
 		print_ascii((uint8_t *)(elf->ehdr) + offset, i, size);
 		printf("\n");
@@ -99,24 +118,4 @@ void print_sections(elf_t *elf, uint8_t *str_tab)
 			print_bytes(elf, (uint8_t *)(addr) + i * size);
 		}
 	}
-}
-
-/**
- * objdump - objdump -sf like printing
- * @elf: elf sections
- */
-void objdump(elf_t *elf)
-{
-	uint8_t *sh_strtab;
-	uint16_t indx, sh_size = elf->shdr.entsize;
-	Elf64_Off str_off;
-
-	indx = GET_EHDR(elf->cls, elf->ehdr, e_shstrndx);
-	CONVERT(elf->data, indx, elf->cls, 2, 2);
-	str_off = GET_SHDR(elf->cls, ((uint8_t *)(elf->shdr.addr) + sh_size * indx),
-					   sh_offset);
-	CONVERT(elf->data, str_off, elf->cls, 4, 8);
-	sh_strtab = (uint8_t *)(elf->ehdr) + str_off;
-	print_file_headers(elf);
-	print_sections(elf, sh_strtab);
 }

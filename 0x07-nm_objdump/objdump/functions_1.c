@@ -115,7 +115,7 @@ void print_file_headers(elf_t *elf)
 
 	addr = GET_EHDR(elf->cls, elf->ehdr, e_entry);
 	CONVERT(elf->data, addr, elf->cls, 4, 8);
-	printf("\n%s:     file format %s\n", elf->file,
+	printf("\n%s:	  file format %s\n", elf->file,
 		   get_file_frmt(elf->cls, elf->data));
 	printf("architecture: %s, flags %#010x:\n",
 		   get_arch(elf->cls, elf->data), flags);
