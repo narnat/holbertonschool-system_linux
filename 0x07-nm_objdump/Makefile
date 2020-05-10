@@ -21,6 +21,8 @@ OBJDUMP_SOURCE = $(patsubst %.c,%.o, $(wildcard objdump/*.c))
 hnm: $(NM_SOURCE)
 	$(CC) -o $@ $^
 
+hobjdump: $(OBJDUMP_SOURCE)
+	$(CC) -o $@ $^
 
 clean:
 	rm nm/*.o objdump/*.o hnm hobjdump
@@ -28,4 +30,4 @@ clean:
 all: clean hnm
 
 check:
-	betty nm/*.[ch]
+	betty nm/*.[ch] objdump/*.[ch]
