@@ -86,7 +86,7 @@ void print_symbol_table_entries(unsigned char *sym_table, int class,
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
  */
-void print_symbol_table(unsigned char *bytes, char *filename, int class,
+int print_symbol_table(unsigned char *bytes, char *filename, int class,
 			  int endianess)
 {
 	void *p = get_section_header_off(bytes, class, endianess);
@@ -124,16 +124,17 @@ void print_symbol_table(unsigned char *bytes, char *filename, int class,
 								   s_size, sh_esize, sh_headers, sh_size);
 	}
 	else
-	{
-		fprintf(stderr, "nm: %s: no symbols\n", filename);
-		free(sh_headers);
-		exit(EXIT_FAILURE);
-	}
+    {
+        free(sh_headers);
+        return (1);
+    }
+    return (0);
 }
 
 int nm_loop(char *cmd, char *filename, int n_files)
 {
 	unsigned char bytes[64];
+    int res;
 
 	if (access(filename, F_OK) == -1)
 	{
@@ -158,10 +159,12 @@ int nm_loop(char *cmd, char *filename, int n_files)
 	if (n_files > 1)
 		printf("\n%s:\n", filename);
 
-	print_symbol_table(bytes, filename,
+	res = print_symbol_table(bytes, filename,
 					   bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 					   bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
-	return (0);
+    if (res)
+        fprintf(stderr, "%s: %s: no symbols\n", cmd, filename);
+    return (0);
 }
 
 /**
