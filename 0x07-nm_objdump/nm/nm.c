@@ -1,5 +1,4 @@
 #include "hnm.h"
-#include <stdlib.h>
 
 /**
  * get_sym_type - Get symbol type
@@ -132,6 +131,39 @@ void print_symbol_table(unsigned char *bytes, char *filename, int class,
 	}
 }
 
+int nm_loop(char *cmd, char *filename, int n_files)
+{
+	unsigned char bytes[64];
+
+	if (access(filename, F_OK) == -1)
+	{
+		fprintf(stderr, "%s: '%s': No such file\n", cmd, filename);
+		return (1);
+	}
+
+	if (read_elf_header_bytes(bytes, filename))
+		return (1);
+	if (access(filename, R_OK) == -1)
+	{
+		fprintf(stderr, "%s: %s: Permission denied\n", cmd, filename);
+		return (EXIT_FAILURE);
+	}
+
+	if (check_elf(bytes))
+	{
+		fprintf(stderr, "%s: %s: File format not recognized\n", cmd, filename);
+		return (1);
+	}
+
+	if (n_files > 1)
+		printf("\n%s:\n", filename);
+
+	print_symbol_table(bytes, filename,
+					   bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
+					   bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
+	return (0);
+}
+
 /**
  * main - Entry point, nm -p
  * @argc: argument count
@@ -140,38 +172,17 @@ void print_symbol_table(unsigned char *bytes, char *filename, int class,
  */
 int main(int argc, char *argv[])
 {
-	unsigned char bytes[64];
 	char *def = "a.out";
+	int n_files = argc - 1, i;
+	int ret = 0;
 
-	/* if (argc != 2) */
-	/* { */
-	/*	fprintf(stderr, "hnm [objfile ...]\n"); */
-	/*	return (EXIT_SUCCESS); */
-	/* } */
 	if (argc < 2)
-		argv[1] = def;
-	if (access(argv[1], F_OK) == -1)
+		argv[1] = def, ++n_files;
+
+	for (i = 1; i <= n_files; ++i)
 	{
-		fprintf(stderr, "%s: '%s': No such file\n", argv[0], argv[1]);
-		return (EXIT_FAILURE);
+		ret += nm_loop(argv[0], argv[i], n_files);
 	}
 
-	if (read_elf_header_bytes(bytes, argv[1]))
-		return (EXIT_FAILURE);
-	if (access(argv[1], R_OK) == -1)
-	{
-		fprintf(stderr, "%s: %s: Permission denied\n", argv[0], argv[1]);
-		return (EXIT_FAILURE);
-	}
-
-	if (check_elf(bytes))
-	{
-		fprintf(stderr, "%s: %s: File format not recognized\n", argv[1], argv[1]);
-		return (EXIT_FAILURE);
-	}
-
-	print_symbol_table(bytes, argv[1],
-					   bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
-					   bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
-	return (0);
+	return (ret);
 }
