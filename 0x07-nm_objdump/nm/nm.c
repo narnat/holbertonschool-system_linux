@@ -85,6 +85,7 @@ void print_symbol_table_entries(unsigned char *sym_table, int class,
  * @filename: elf file
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
+ * Return: 1 if no symbols, 0 otherwise
  */
 int print_symbol_table(unsigned char *bytes, char *filename, int class,
 			  int endianess)
@@ -124,17 +125,24 @@ int print_symbol_table(unsigned char *bytes, char *filename, int class,
 								   s_size, sh_esize, sh_headers, sh_size);
 	}
 	else
-    {
-        free(sh_headers);
-        return (1);
-    }
-    return (0);
+	{
+		free(sh_headers);
+		return (1);
+	}
+	return (0);
 }
 
-int nm_loop(char *cmd, char *filename, int n_files)
+/**
+ * nm - nm -p command implementation
+ * @cmd: name of executable
+ * @filename: filename
+ * @n_files: number of files
+ * Return: 0 if success, 1 if failure
+ */
+int nm(char *cmd, char *filename, int n_files)
 {
 	unsigned char bytes[64];
-    int res;
+	int res;
 
 	if (access(filename, F_OK) == -1)
 	{
@@ -162,9 +170,9 @@ int nm_loop(char *cmd, char *filename, int n_files)
 	res = print_symbol_table(bytes, filename,
 					   bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 					   bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
-    if (res)
-        fprintf(stderr, "%s: %s: no symbols\n", cmd, filename);
-    return (0);
+	if (res)
+		fprintf(stderr, "%s: %s: no symbols\n", cmd, filename);
+	return (0);
 }
 
 /**
@@ -184,7 +192,7 @@ int main(int argc, char *argv[])
 
 	for (i = 1; i <= n_files; ++i)
 	{
-		ret += nm_loop(argv[0], argv[i], n_files);
+		ret += nm(argv[0], argv[i], n_files);
 	}
 
 	return (ret);
