@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		argv[1] = def;
 	if (access(argv[1], F_OK) == -1)
 	{
-		fprintf(stderr, "nm: '%s': No such file\n", argv[1]);
+		fprintf(stderr, "%s: '%s': No such file\n", argv[0], argv[1]);
 		return (EXIT_FAILURE);
 	}
 
@@ -160,13 +160,13 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	if (access(argv[1], R_OK) == -1)
 	{
-		fprintf(stderr, "nm: %s: Permission denied\n", argv[1]);
+		fprintf(stderr, "%s: %s: Permission denied\n", argv[0], argv[1]);
 		return (EXIT_FAILURE);
 	}
 
 	if (check_elf(bytes))
 	{
-		fprintf(stderr, "nm: %s: File format not recognized\n", argv[1]);
+		fprintf(stderr, "%s: %s: File format not recognized\n", argv[1], argv[1]);
 		return (EXIT_FAILURE);
 	}
 
