@@ -1,8 +1,7 @@
 #include <Python.h>
-#include <object.h>
-#include <listobject.h>
 
 #define PyListCast(op) ((PyListObject *)(op))
+#define PyBytesCast(op) ((PyBytesObject *)(op))
 
 /**
  * print_python_bytes - prints info about python bytes object
@@ -22,7 +21,7 @@ void print_python_bytes(PyObject *p)
 	size = PyBytes_Size(p);
 	str = PyBytes_AsString(p);
 	printf("  size: %ld\n", size);
-	printf("  trying string: %s\n", str);
+	printf("  trying string: %s\n", str); /*FIXME: ???*/
 	size = size > 10 ? 10 : size + 1;
 	printf("  first %ld bytes:", size);
 	for (i = 0; i < size; ++i)
@@ -53,7 +52,7 @@ void print_python_list(PyObject *p)
 	for (i = 0; i < size; ++i)
 	{
 		item = PyList_GET_ITEM(p, i);
-		printf("Element %ld: %s\n", i, Py_TYPE(item)->tp_name); /*FIXME: Py_Type*/
+		printf("Element %ld: %s\n", i, item->ob_type->tp_name);
 		if (PyBytes_Check(item))
 			print_python_bytes(item);
 	}
