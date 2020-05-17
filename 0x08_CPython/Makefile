@@ -3,6 +3,9 @@ CFLAGS = -Wall -Werror -Wextra -pedantic -std=c99 -ggdb3 -shared -Wl,-soname,PyL
 
 .PHONY: clean, check
 
+libPython.so: 2-python.c
+	$(CC) $(CFLAGS) -o $@  $^
+
 libPyList.so: 1-python.c
 	$(CC) $(CFLAGS) -o $@  $^
 
