@@ -9,5 +9,5 @@ O(n)
 O(n)
 O(nlog(n))
 O(n)
-O(1)
+O(n)
 
