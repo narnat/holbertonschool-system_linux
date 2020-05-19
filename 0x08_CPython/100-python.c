@@ -57,6 +57,9 @@ char *long_to_string(PyObject *aa)
 	}
 	if (size == 0)
 		pout[size++] = 0;
+	for (i = 0; i < size; ++i)
+		printf("%u", pout[i]);
+	printf("\n");
 	strlen = negative + 1 + (size - 1) * _PyLong_DECIMAL_SHIFT;
 	tenpow = 10, rem = pout[size - 1];
 	while (rem >= tenpow)
@@ -82,6 +85,6 @@ void print_python_int(PyObject *p)
 		return;
 	}
 	str = long_to_string(p);
-	printf("%s\n", str);
+	/* printf("%s\n", str); */
 	free(str);
 }
