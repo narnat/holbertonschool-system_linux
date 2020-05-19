@@ -24,7 +24,7 @@ void print_python_bytes(PyObject *p)
 	str = PyBytesCast(p)->ob_sval;
 	printf("  size: %ld\n", size);
 	printf("  trying string: %s\n", str);
-	size = size > 10 ? 10 : size + 1;
+	size = size + 1 > 10 ? 10 : size + 1;
 	printf("  first %ld bytes:", size);
 	for (i = 0; i < size; ++i)
 	{
