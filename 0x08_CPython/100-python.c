@@ -67,7 +67,7 @@ char *long_to_string(PyObject *aa)
 	str = calloc(1, strlen);
 	p = str + strlen;
 	WRITE_DIGITS(p);
-	PyMem_Free(scratch);
+	/* PyMem_Free(scratch); */
 	return (str);
 }
 
