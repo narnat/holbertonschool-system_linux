@@ -20,7 +20,7 @@ void long_to_string(PyObject *aa)
 		(10 * PyLong_SHIFT - 33 * _PyLong_DECIMAL_SHIFT);
 	size = 1 + size_a + size_a / d,  scratch = _PyLong_New(size);
 	if (scratch == NULL)
-		return (NULL);
+		return;
 	pin = a->ob_digit, pout = scratch->ob_digit,  size = 0;
 	for (i = size_a; --i >= 0; )
 	{
@@ -47,7 +47,6 @@ void long_to_string(PyObject *aa)
 		else
 			printf("%09u", pout[i]);
 	printf("\n");
-	return (NULL);
 }
 
 /**
@@ -56,8 +55,6 @@ void long_to_string(PyObject *aa)
  */
 void print_python_int(PyObject *p)
 {
-	char *str;
-
 	if (!p || !PyLong_Check(p))
 	{
 		printf("Invalid Int Object\n");
