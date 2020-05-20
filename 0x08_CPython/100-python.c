@@ -22,7 +22,6 @@
 			*--p = '-';					\
 	} while (0)
 
-
 char *long_to_string(PyObject *aa)
 {
 	PyLongObject *scratch, *a;
@@ -57,9 +56,6 @@ char *long_to_string(PyObject *aa)
 	}
 	if (size == 0)
 		pout[size++] = 0;
-	/* for (i = 0; i < size; ++i) */
-	/* 	printf("%u", pout[i]); */
-	/* printf("\n"); */
 	strlen = negative + 1 + (size - 1) * _PyLong_DECIMAL_SHIFT;
 	tenpow = 10, rem = pout[size - 1];
 	while (rem >= tenpow)
@@ -69,6 +65,53 @@ char *long_to_string(PyObject *aa)
 	WRITE_DIGITS(p);
 	/* PyMem_Free(scratch); */
 	return (str);
+}
+
+char *long_to_string_2(PyObject *aa)
+{
+	PyLongObject *scratch, *a;
+	Py_ssize_t size, size_a, i, j;
+	digit *pout, *pin, hi;
+	int negative, d;
+	twodigits z;
+
+	a = (PyLongObject *)aa, size_a = abs(Py_SIZE(a));
+	negative = Py_SIZE(a) < 0;
+	d = (33 * _PyLong_DECIMAL_SHIFT) /
+		(10 * PyLong_SHIFT - 33 * _PyLong_DECIMAL_SHIFT);
+	size = 1 + size_a + size_a / d,  scratch = _PyLong_New(size);
+	if (scratch == NULL)
+		return (NULL);
+	pin = a->ob_digit, pout = scratch->ob_digit,  size = 0;
+	for (i = size_a; --i >= 0; )
+	{
+		hi = pin[i];
+		for (j = 0; j < size; j++)
+		{
+			z = (twodigits)pout[j] << PyLong_SHIFT | hi;
+			hi = (digit)(z / _PyLong_DECIMAL_BASE);
+			pout[j] = (digit)(z - (twodigits)hi * _PyLong_DECIMAL_BASE);
+			/* printf("J :%lu Pout: %u\n", j, pout[j]); */
+		}
+		while (hi)
+		{
+			pout[size++] = hi % _PyLong_DECIMAL_BASE;
+			hi /= _PyLong_DECIMAL_BASE;
+		}
+	}
+	if (size == 0)
+		pout[size++] = 0;
+	if (negative)
+		putchar('-');
+	for (i = size; --i >= 0;) {
+		if (i == size - 1)
+			printf("%u", pout[i]);
+		else
+			printf("%09u", pout[i]);
+	}
+	printf("\n");
+	/* printf("****************************************\n"); */
+	return (NULL);
 }
 
 /**
@@ -84,7 +127,7 @@ void print_python_int(PyObject *p)
 		printf("Invalid Int Object\n");
 		return;
 	}
-	str = long_to_string(p);
-	printf("%s\n", str);
+	str = long_to_string_2(p);
+	/* printf("%s\n", str); */
 	free(str);
 }
