@@ -50,7 +50,7 @@ void print_python_float(PyObject *p)
 
 	printf("[.] float object info\n");
 	fflush(stdout);
-	if (!p || !PyFloat_Check(p))
+	if (!p || !PyFloat_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid Float Object\n");
 		fflush(stdout);
@@ -79,7 +79,6 @@ void print_python_list(PyObject *p)
 		fflush(stdout);
 		return;
 	}
-
 	size = PyVarObjectCast(p)->ob_size;
 	list = PyListCast(p);
 	printf("[*] Python list info\n");
