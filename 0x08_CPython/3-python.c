@@ -15,7 +15,7 @@ void print_python_bytes(PyObject *p)
 
 	printf("[.] bytes object info\n");
 	fflush(stdout);
-	if (!p || !PyBytes_Check(p))
+	if (!p || !PyBytes_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid Bytes Object\n");
 		fflush(stdout);
@@ -73,7 +73,7 @@ void print_python_list(PyObject *p)
 	PyObject *item;
 	PyListObject *list;
 
-	if (!p || !PyList_Check(p))
+	if (!p || !PyList_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid List Object\n");
 		fflush(stdout);
