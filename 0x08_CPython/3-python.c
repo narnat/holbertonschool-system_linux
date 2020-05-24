@@ -57,8 +57,8 @@ void print_python_float(PyObject *p)
 	if (strlen(s2) >= 16)
 	{
 		s2[16] = '\0';
-		printf("  value: %s\n", s1);
-		/* printf("  value: %s%s\n", s1, (*(s2 + 17) == 'e') ? s2 + 17 : ""); */
+		/* printf("  value: %s\n", s1); */
+		printf("  value: %s%s\n", s1, (*(s2 + 17) == 'e') ? s2 + 17 : "");
 	}
 	else
 	{
@@ -78,6 +78,7 @@ void print_python_list(PyObject *p)
 	PyObject *item;
 	PyListObject *list;
 
+	printf("[*] Python list info\n");
 	if (!p || !PyList_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid List Object\n");
@@ -86,7 +87,6 @@ void print_python_list(PyObject *p)
 	}
 	size = PyVarObjectCast(p)->ob_size;
 	list = PyListCast(p);
-	printf("[*] Python list info\n");
 	printf("[*] Size of the Python List = %ld\n", size);
 	printf("[*] Allocated = %ld\n", list->allocated);
 	for (i = 0; i < size; ++i)
