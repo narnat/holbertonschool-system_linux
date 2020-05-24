@@ -57,7 +57,8 @@ void print_python_float(PyObject *p)
 	if (strlen(s2) >= 16)
 	{
 		s2[16] = '\0';
-		printf("  value: %s%s\n", s1, (*(s2 + 17) == 'e') ? s2 + 17 : "");
+		printf("  value: %s\n", s1);
+		/* printf("  value: %s%s\n", s1, (*(s2 + 17) == 'e') ? s2 + 17 : ""); */
 	}
 	else
 	{
