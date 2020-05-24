@@ -1,5 +1,6 @@
 #include <Python.h>
 #include <stdio.h>
+#include "string.h"
 #define PyListCast(op) ((PyListObject *)(op))
 #define PyBytesCast(op) ((PyBytesObject *)(op))
 #define PyVarObjectCast(op) ((PyVarObject *)(op))
@@ -14,7 +15,6 @@ void print_python_bytes(PyObject *p)
 	char *str;
 
 	printf("[.] bytes object info\n");
-	fflush(stdout);
 	if (!p || !PyBytes_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid Bytes Object\n");
@@ -24,16 +24,12 @@ void print_python_bytes(PyObject *p)
 	size = PyBytes_Size(p);
 	str = PyBytesCast(p)->ob_sval;
 	printf("  size: %ld\n", size);
-	fflush(stdout);
 	printf("  trying string: %s\n", str);
-	fflush(stdout);
 	size = size + 1 > 10 ? 10 : size + 1;
 	printf("  first %ld bytes:", size);
-	fflush(stdout);
 	for (i = 0; i < size; ++i)
 	{
 		printf(" %02hhx", str[i]);
-		fflush(stdout);
 	}
 	putchar('\n');
 	fflush(stdout);
@@ -45,11 +41,10 @@ void print_python_bytes(PyObject *p)
  */
 void print_python_float(PyObject *p)
 {
-	char *s1;
+	char *s1, *s2;
 	double d;
 
 	printf("[.] float object info\n");
-	fflush(stdout);
 	if (!p || !PyFloat_CheckExact(p))
 	{
 		printf("  [ERROR] Invalid Float Object\n");
@@ -58,7 +53,16 @@ void print_python_float(PyObject *p)
 	}
 	d = ((PyFloatObject *)(p))->ob_fval;
 	s1 = PyOS_double_to_string(d, 'r', 0, Py_DTSF_ADD_DOT_0, NULL);
-	printf("  value: %s\n", s1);
+	s2 = strchr(s1, '.');
+	if (strlen(s2) >= 16)
+	{
+		s2[16] = '\0';
+		printf("  value: %s%s\n", s1, (*(s2 + 17) != '\0') ? s2 + 17 : "");
+	}
+	else
+	{
+		printf("  value: %s\n", s1);
+	}
 	fflush(stdout);
 	/* PyMem_Free(s1); */
 }
@@ -82,20 +86,16 @@ void print_python_list(PyObject *p)
 	size = PyVarObjectCast(p)->ob_size;
 	list = PyListCast(p);
 	printf("[*] Python list info\n");
-	fflush(stdout);
 	printf("[*] Size of the Python List = %ld\n", size);
-	fflush(stdout);
 	printf("[*] Allocated = %ld\n", list->allocated);
-	fflush(stdout);
 	for (i = 0; i < size; ++i)
 	{
 		item = PyList_GET_ITEM(p, i);
 		printf("Element %ld: %s\n", i, (list->ob_item[i])->ob_type->tp_name);
-		fflush(stdout);
 		if (PyBytes_Check(item))
 			print_python_bytes(item);
 		else if (PyFloat_Check(item))
 			print_python_float(item);
 	}
-	/* fflush(stdout); */
+	fflush(stdout);
 }
