@@ -49,7 +49,7 @@ int tracer(pid_t child)
 	long syscall;
 
 	waitpid(child, &status, 0);
-
+	setbuf(stdout, NULL);
 	ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD);
 	while (1)
 	{
