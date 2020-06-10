@@ -59,10 +59,13 @@ int tracer(pid_t child)
 		if (wait_syscall(child) != 0)
 			break;
 		syscall = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * ORIG_RAX);
-		fprintf(stdout, "%s\n", syscalls_64_g[syscall].name);
+		fprintf(stdout, "%s", syscalls_64_g[syscall].name);
 		if (wait_syscall(child) != 0)
 			break;
+		fprintf(stdout, "\n");
+
 	}
+	fprintf(stdout, "\n");
 	return (EXIT_SUCCESS);
 }
 
