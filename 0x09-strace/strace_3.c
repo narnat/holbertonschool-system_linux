@@ -69,12 +69,18 @@ void print_args(struct user_regs_struct u_in)
 int tracer(pid_t child)
 {
 	int status;
-	long retval;
 	struct user_regs_struct u_in;
 
 	waitpid(child, &status, 0);
 	setbuf(stdout, NULL);
 	ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD);
+	if (wait_syscall(child) != 0)
+		return (EXIT_SUCCESS);
+	fprintf(stderr, "execve(0, 0, 0) = 0\n");
+	ptrace(PTRACE_GETREGS, child, 0, &u_in);
+	if (wait_syscall(child) != 0)
+		return (EXIT_SUCCESS);
+	ptrace(PTRACE_GETREGS, child, 0, &u_in);
 	while (1)
 	{
 		if (wait_syscall(child) != 0)
@@ -84,8 +90,8 @@ int tracer(pid_t child)
 		print_args(u_in);
 		if (wait_syscall(child) != 0)
 			break;
-		retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
-		fprintf(stdout, ") = %#lx\n", retval);
+		ptrace(PTRACE_GETREGS, child, 0, &u_in);
+		fprintf(stdout, ") = %#lx\n", (ulong)u_in.rax);
 	}
 	fprintf(stdout, ") = ?\n");
 	return (EXIT_SUCCESS);
