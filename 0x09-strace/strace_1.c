@@ -83,13 +83,13 @@ int main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	}
 
-	if (access(argv[1], R_OK) == -1)
-	{
-		fprintf(stderr,
-			"strace: Can't stat '%s': No such file or directory\n",
-			argv[1]);
-		return (EXIT_FAILURE);
-	}
+	/* if (access(argv[1], R_OK) == -1) */
+	/* { */
+	/*	fprintf(stderr, */
+	/*		"strace: Can't stat '%s': No such file or directory\n", */
+	/*		argv[1]); */
+	/*	return (EXIT_FAILURE); */
+	/* } */
 	child = fork();
 
 	if (child < 0)
