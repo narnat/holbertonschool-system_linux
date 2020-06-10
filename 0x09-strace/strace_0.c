@@ -9,12 +9,12 @@
  * @argv: Args vector
  * Return: -1 if failed
 */
-int sub_process(int argc, char *argv[])
+int sub_process(int argc, char *argv[], char *envp[])
 {
 	(void) argc;
 	ptrace(PTRACE_TRACEME);
 	kill(getpid(), SIGSTOP);
-	return (execve(argv[0], argv, NULL));
+	return (execve(argv[0], argv, envp));
 }
 
 /**
@@ -69,7 +69,7 @@ int tracer(pid_t child)
  * @argv: Args vector
  * Return: EXIT_FAILURE if failed, EXIT_SUCCESS if successful
  */
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char *envp[])
 {
 	pid_t child;
 
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	}
 	else if (child == 0)
 	{
-		return (sub_process(argc - 1, argv + 1));
+		return (sub_process(argc - 1, argv + 1, envp));
 	}
 	else
 	{
