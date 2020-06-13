@@ -6,10 +6,11 @@ TASK_1 = strace_1
 TASK_2 = strace_2
 TASK_3 = strace_3
 TASK_4 = strace_4
+UTILS = utils
 
 .PHONY: clean, check
 
-$(TASK_4): $(TASK_4).o $(HEADERS)
+$(TASK_4): $(TASK_4).o $(UTILS).o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK_3): $(TASK_3).o $(HEADERS)

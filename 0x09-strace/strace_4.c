@@ -6,14 +6,11 @@
 #include <sys/types.h>
 #include <sys/reg.h>
 
-int sub_process(int argc, char *argv[])
-{
-	(void) argc;
-	ptrace(PTRACE_TRACEME);
-	kill(getpid(), SIGSTOP);
-	return execve(argv[0], argv, NULL);
-}
-
+/**
+ * wait_syscall - Waits for syscall invocation in subprocess
+ * @child: subprocess PID
+ * Return: 0 if syscall is called, 0 if subprocess is terminated
+ */
 int wait_syscall(pid_t child)
 {
 	int status;
@@ -30,50 +27,92 @@ int wait_syscall(pid_t child)
 	return (1);
 }
 
-void print_register(struct user_regs_struct u_in, int idx, ulong reg, char *str)
+/**
+ * print_register - print registers (params of syscalls)
+ * @u_in: registers struct
+ * @idx: parameter index
+ * @reg: register
+ * @str: delimeter
+ * @child_pid: PID of child process
+*/
+void print_register(struct user_regs_struct u_in, int idx, ulong reg,
+		    char *str, pid_t child_pid)
 {
-	/* fprintf(stderr, "Type: %d\n", syscalls_64_g[u_in.orig_rax].params[idx]); */
+	char *s = NULL;
+
 	if (syscalls_64_g[u_in.orig_rax].params[idx] != (type_t)-1 &&
 	    syscalls_64_g[u_in.orig_rax].params[idx] != VOID)
 	{
 		if (syscalls_64_g[u_in.orig_rax].params[idx] == VARARGS)
 			fprintf(stderr, "%s...", str);
 		else if (syscalls_64_g[u_in.orig_rax].params[idx] == CHAR_P)
-			fprintf(stderr, "%s%s", str, *(const char **)reg);
-		else
-			fprintf(stderr, "%s%#lx", str, reg);
+		{
+			s = read_string(child_pid, reg);
+			fprintf(stderr, "%s\"%s\"", str, s);
+			free(s);
+		}
+			else
+				fprintf(stderr, "%s%#lx", str, reg);
 	}
 }
 
-void print_args(struct user_regs_struct u_in)
+/**
+ * print_args - print arguments to syscalls
+ * @u_in: registers struct
+ * @child_pid: PID of child process
+ */
+void print_args(struct user_regs_struct u_in, pid_t child_pid)
 {
 	fprintf(stderr, "(");
-	print_register(u_in, 0, u_in.rdi, "");
-	print_register(u_in, 1, u_in.rsi, ", ");
-	print_register(u_in, 2, u_in.rdx, ", ");
-	print_register(u_in, 3, u_in.r10, ", ");
-	print_register(u_in, 4, u_in.r8, ", ");
-	print_register(u_in, 5, u_in.r9, ", ");
+	print_register(u_in, 0, u_in.rdi, "", child_pid);
+	print_register(u_in, 1, u_in.rsi, ", ", child_pid);
+	print_register(u_in, 2, u_in.rdx, ", ", child_pid);
+	print_register(u_in, 3, u_in.r10, ", ", child_pid);
+	print_register(u_in, 4, u_in.r8, ", ", child_pid);
+	print_register(u_in, 5, u_in.r9, ", ", child_pid);
 	fprintf(stderr, ")");
 }
 
-int tracer(pid_t child)
+/**
+ * tracer - tracer process
+ * @child: subprocess PID
+ * @argc: arg count
+ * @argv: argument vector
+ * @envp: environmental variables
+ * Return: EXIT_SUCCESS on success
+ */
+int tracer(pid_t child, int argc, char *argv[], char *envp[])
 {
-	int status;
-	long syscall, retval;
+	int status, i;
+	long retval;
 	struct user_regs_struct u_in;
 
-	(void) syscall;
+	setbuf(stdout, NULL);
 	waitpid(child, &status, 0);
 	ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD);
+
+	if (wait_syscall(child) != 0)
+		return (0);
+	ptrace(PTRACE_GETREGS, child, 0, &u_in);
+	if (wait_syscall(child) != 0)
+		return (0);
+	retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
+	fprintf(stdout, "execve(\"%s\", [", argv[0]);
+	for (i = 0; i < argc; ++i)
+		printf("\"%s\"", argv[i]);
+	for (i = 0; envp[i]; ++i)
+		;
+	printf("], %#lx /* %d vars*/)\n", (ulong)u_in.rdx, i);
+
 	while (1)
 	{
 		if (wait_syscall(child) != 0)
 			break;
-		syscall = ptrace(PTRACE_GETREGS, child, 0, &u_in);
+		ptrace(PTRACE_GETREGS, child, 0, &u_in);
 		fprintf(stderr, "%s", syscalls_64_g[u_in.orig_rax].name);
-		print_args(u_in);
-		if (wait_syscall(child) != 0) break;
+		print_args(u_in, child);
+		if (wait_syscall(child) != 0)
+			break;
 		retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
 		fprintf(stderr, " = %#lx\n", retval);
 	}
@@ -81,7 +120,14 @@ int tracer(pid_t child)
 	return (EXIT_SUCCESS);
 }
 
-int main(int argc, char *argv[])
+/**
+ * main - Entry point
+ * @argc: Args count
+ * @argv: Args vector
+ * @envp: Environmental variables
+ * Return: EXIT_FAILURE if failed, EXIT_SUCCESS if successful
+ */
+int main(int argc, char *argv[], char *envp[])
 {
 	pid_t child;
 
@@ -92,13 +138,20 @@ int main(int argc, char *argv[])
 	}
 
 	child = fork();
-
+	++argv;
+	--argc;
+	if (child < 0)
+	{
+		return (EXIT_FAILURE);
+	}
 	if (child == 0)
 	{
-		return (sub_process(argc - 1, argv + 1));
+		ptrace(PTRACE_TRACEME);
+		kill(getpid(), SIGSTOP);
+		return (execve(argv[0], argv, envp));
 	}
 	else
 	{
-		return (tracer(child));
+		return (tracer(child, argc, argv, envp));
 	}
 }

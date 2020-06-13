@@ -7,6 +7,7 @@
  * sub_process - create a subprocess
  * @argc: Args count
  * @argv: Args vector
+ * @envp: Environmental variables
  * Return: -1 if failed
 */
 int sub_process(int argc, char *argv[], char *envp[])
@@ -67,6 +68,7 @@ int tracer(pid_t child)
  * main - Entry point
  * @argc: Args count
  * @argv: Args vector
+ * @envp: Environmental variables
  * Return: EXIT_FAILURE if failed, EXIT_SUCCESS if successful
  */
 int main(int argc, char *argv[], char *envp[])

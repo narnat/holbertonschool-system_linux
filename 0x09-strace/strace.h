@@ -14,4 +14,6 @@
 #include <sys/user.h>
 #include "syscalls.h"
 
+char *read_string(pid_t child_pid, unsigned long addr);
+
 #endif /* STRACE_H */
