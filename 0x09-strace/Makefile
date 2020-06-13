@@ -6,9 +6,25 @@ TASK_1 = strace_1
 TASK_2 = strace_2
 TASK_3 = strace_3
 TASK_4 = strace_4
+TASK_5 = strace_5
+TASK_6 = strace_6
+TASK_7 = strace_7
+TASK_8 = strace_8
 UTILS = utils
 
 .PHONY: clean, check
+
+$(TASK_8): $(TASK_4).o $(UTILS).o $(HEADERS)
+	$(CC) $(CFLAGS) -o $@  $^
+
+$(TASK_7): $(TASK_4).o $(UTILS).o $(HEADERS)
+	$(CC) $(CFLAGS) -o $@  $^
+
+$(TASK_6): $(TASK_4).o $(UTILS).o $(HEADERS)
+	$(CC) $(CFLAGS) -o $@  $^
+
+$(TASK_5): $(TASK_4).o $(UTILS).o $(HEADERS)
+	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK_4): $(TASK_4).o $(UTILS).o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@  $^
@@ -26,7 +42,7 @@ $(TASK_0): $(TASK_0).o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@  $^
 
 clean:
-	rm *.o $(TASK_0) $(TASK_1) $(TASK_2) $(TASK_3) $(TASK_4)
+	rm *.o $(TASK_0) $(TASK_1) $(TASK_2) $(TASK_3) $(TASK_4) $(TASK_5) $(TASK_6) $(TASK_7) $(TASK_8)
 
 check:
 	betty *.c *.h
