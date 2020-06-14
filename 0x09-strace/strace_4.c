@@ -58,14 +58,12 @@ void print_register(struct user_regs_struct u_in, int idx, ulong reg,
  */
 void print_args(struct user_regs_struct u_in, pid_t child_pid)
 {
-	fprintf(stderr, "(");
 	print_register(u_in, 0, u_in.rdi, "", child_pid);
 	print_register(u_in, 1, u_in.rsi, ", ", child_pid);
 	print_register(u_in, 2, u_in.rdx, ", ", child_pid);
 	print_register(u_in, 3, u_in.r10, ", ", child_pid);
 	print_register(u_in, 4, u_in.r8, ", ", child_pid);
 	print_register(u_in, 5, u_in.r9, ", ", child_pid);
-	fprintf(stderr, ")");
 }
 
 /**
@@ -104,14 +102,14 @@ int tracer(pid_t child, int argc, char *argv[], char *envp[])
 		if (wait_syscall(child) != 0)
 			break;
 		ptrace(PTRACE_GETREGS, child, 0, &u_in);
-		fprintf(stderr, "%s", syscalls_64_g[u_in.orig_rax].name);
+		fprintf(stderr, "%s(", syscalls_64_g[u_in.orig_rax].name);
 		print_args(u_in, child);
 		if (wait_syscall(child) != 0)
 			break;
 		retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
-		fprintf(stderr, " = %#lx\n", retval);
+		fprintf(stderr, ") = %#lx\n", retval);
 	}
-	fprintf(stderr, " = ?\n");
+	fprintf(stderr, ") = ?\n");
 	return (EXIT_SUCCESS);
 }
 
