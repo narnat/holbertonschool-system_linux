@@ -113,7 +113,7 @@ int tracer(pid_t child, int argc, char *argv[], char *envp[])
 		printf("\"%s\"", argv[i]);
 	for (i = 0; envp[i]; ++i)
 		;
-	printf("], /* %d vars*/) = %lu\n", i, retval);
+	printf("], [/* %d vars*/]) = %lu\n", i, retval);
 
 	while (1)
 	{
