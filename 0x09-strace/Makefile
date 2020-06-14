@@ -14,16 +14,16 @@ UTILS = utils
 
 .PHONY: clean, check
 
-$(TASK_8): $(TASK_4).o $(UTILS).o $(HEADERS)
-	$(CC) $(CFLAGS) -o $@  $^
+# $(TASK_8): $(TASK_8).o $(UTILS).o $(HEADERS)
+# 	$(CC) $(CFLAGS) -o $@  $^
 
-$(TASK_7): $(TASK_4).o $(UTILS).o $(HEADERS)
-	$(CC) $(CFLAGS) -o $@  $^
+# $(TASK_7): $(TASK_7).o $(UTILS).o $(HEADERS)
+# 	$(CC) $(CFLAGS) -o $@  $^
 
-$(TASK_6): $(TASK_4).o $(UTILS).o $(HEADERS)
-	$(CC) $(CFLAGS) -o $@  $^
+# $(TASK_6): $(TASK_6).o $(UTILS).o $(HEADERS)
+# 	$(CC) $(CFLAGS) -o $@  $^
 
-$(TASK_5): $(TASK_4).o $(UTILS).o $(HEADERS)
+$(TASK_5): $(TASK_5).o $(UTILS).o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK_4): $(TASK_4).o $(UTILS).o $(HEADERS)

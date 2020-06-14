@@ -39,15 +39,33 @@ void print_register(struct user_regs_struct u_in, int idx, ulong reg,
 	    syscalls_64_g[u_in.orig_rax].params[idx] != VOID)
 	{
 		if (syscalls_64_g[u_in.orig_rax].params[idx] == VARARGS)
-			fprintf(stderr, "%s...", str);
+			fprintf(stdout, "%s...", str);
 		else if (syscalls_64_g[u_in.orig_rax].params[idx] == CHAR_P)
 		{
 			s = read_string(child_pid, reg);
-			fprintf(stderr, "%s\"%s\"", str, s);
+			fprintf(stdout, "%s\"%s\"", str, s);
 			free(s);
 		}
-			else
-				fprintf(stderr, "%s%#lx", str, reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == INT)
+			fprintf(stdout, "%s%d", str, (int)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == LONG)
+			fprintf(stdout, "%s%ld", str, (long)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == SIZE_T)
+			fprintf(stdout, "%s%lu", str, (ulong)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == SSIZE_T)
+			fprintf(stdout, "%s%ld", str, (long)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == U64)
+			fprintf(stdout, "%s%lu", str, (ulong)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == UINT32_T)
+			fprintf(stdout, "%s%lu", str, (ulong)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == UNSIGNED_INT)
+			fprintf(stdout, "%s%u", str, (uint)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == UNSIGNED_LONG)
+			fprintf(stdout, "%s%lu", str, (ulong)reg);
+		else if (syscalls_64_g[u_in.orig_rax].params[idx] == PID_T)
+			fprintf(stdout, "%s%d", str, (int)reg);
+		else
+			fprintf(stdout, "%s%#lx", str, reg);
 	}
 }
 
@@ -58,14 +76,12 @@ void print_register(struct user_regs_struct u_in, int idx, ulong reg,
  */
 void print_args(struct user_regs_struct u_in, pid_t child_pid)
 {
-	fprintf(stderr, "(");
 	print_register(u_in, 0, u_in.rdi, "", child_pid);
 	print_register(u_in, 1, u_in.rsi, ", ", child_pid);
 	print_register(u_in, 2, u_in.rdx, ", ", child_pid);
 	print_register(u_in, 3, u_in.r10, ", ", child_pid);
 	print_register(u_in, 4, u_in.r8, ", ", child_pid);
 	print_register(u_in, 5, u_in.r9, ", ", child_pid);
-	fprintf(stderr, ")");
 }
 
 /**
@@ -97,21 +113,21 @@ int tracer(pid_t child, int argc, char *argv[], char *envp[])
 		printf("\"%s\"", argv[i]);
 	for (i = 0; envp[i]; ++i)
 		;
-	printf("], %#lx /* %d vars*/)\n", (ulong)u_in.rdx, i);
+	printf("], /* %d vars*/) = %lu\n", i, retval);
 
 	while (1)
 	{
 		if (wait_syscall(child) != 0)
 			break;
 		ptrace(PTRACE_GETREGS, child, 0, &u_in);
-		fprintf(stderr, "%s", syscalls_64_g[u_in.orig_rax].name);
+		fprintf(stdout, "%s(", syscalls_64_g[u_in.orig_rax].name);
 		print_args(u_in, child);
 		if (wait_syscall(child) != 0)
 			break;
 		retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
-		fprintf(stderr, " = %#lx\n", retval);
+		print_retval(retval, u_in);
 	}
-	fprintf(stderr, " = ?\n");
+	fprintf(stdout, ") = ?\n");
 	return (EXIT_SUCCESS);
 }
 
