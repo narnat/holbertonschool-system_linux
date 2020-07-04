@@ -117,4 +117,5 @@ task_t *create_task(task_entry_t entry, void *param);
 void destroy_task(task_t *task);
 void *exec_tasks(list_t const *tasks);
 void mutex_init(void) __attribute__((constructor));
+void mutex_destroy(void) __attribute__((destructor));
 #endif /* MULTITHREADING_H */

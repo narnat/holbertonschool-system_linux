@@ -12,7 +12,7 @@
 ################################################################################################################################################################
 SHELL = /bin/bash
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu89 -g
+CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu89 -ggdb3
 NM_SOURCE = $(patsubst %.c,%.o, $(wildcard nm/*.c))
 OBJDUMP_SOURCE = $(patsubst %.c,%.o, $(wildcard objdump/*.c))
 

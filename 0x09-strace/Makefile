@@ -20,8 +20,8 @@ UTILS = utils
 # $(TASK_7): $(TASK_7).o $(UTILS).o $(HEADERS)
 # 	$(CC) $(CFLAGS) -o $@  $^
 
-# $(TASK_6): $(TASK_6).o $(UTILS).o $(HEADERS)
-# 	$(CC) $(CFLAGS) -o $@  $^
+$(TASK_6): $(TASK_6).o $(UTILS).o $(HEADERS)
+	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK_5): $(TASK_5).o $(UTILS).o $(HEADERS)
 	$(CC) $(CFLAGS) -o $@  $^

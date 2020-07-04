@@ -1,14 +1,27 @@
 #include "multithreading.h"
 
-pthread_mutex_t lock;
+static pthread_mutex_t lock;
 
 /**
  * mutex_init - this function called before main function to
  * initialize lock variable (Constructor)
-*/
+ */
 void mutex_init(void)
 {
 	if (pthread_mutex_init(&lock, NULL))
+	{
+		printf("Mutex init has failed\n");
+		exit(EXIT_FAILURE);
+	}
+}
+
+/**
+ * mutex_destroy - this function called before main function to
+ * initialize lock variable (Constructor)
+ */
+void mutex_destroy(void)
+{
+	if (pthread_mutex_destroy(&lock))
 	{
 		printf("Mutex init has failed\n");
 		exit(EXIT_FAILURE);

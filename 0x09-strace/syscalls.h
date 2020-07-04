@@ -1,60 +1,35 @@
 #ifndef _SYSCALLS_H_
-# define _SYSCALLS_H_
+#define _SYSCALLS_H_
 
-# include <stddef.h>
+#include <stddef.h>
 
 /* Normally, MAX_PARAMS is always 6 */
-# define MAX_PARAMS	6
-
+#define MAX_PARAMS	6
+#define PTR_PRM_STRT 0
+#define PTR_PRM_END 64
 /**
  * enum type_e - Enumerates the different types present in the different
  * syscall parameters and return types
  */
 typedef enum type_e
 {
-	AIO_CONTEXT_T,
-	AIO_CONTEXT_T_P,
-	CADDR_T,
-	CAP_USER_DATA_T,
-	CAP_USER_HEADER_T,
+	AIO_CONTEXT_T_P, /* Pointer type START, 65 pointer types, from 0-64*/
 	CHAR_P,
-	CLOCKID_T,
-	CLOCK_T,
 	CPU_SET_T_P,
-	DEV_T,
-	ENUM___PTRACE_REQUEST,
 	FD_SET_P,
-	GID_T,
 	GID_T_P,
-	IDTYPE_T,
-	ID_T,
-	INT,
 	INT_P,
-	KEY_SERIAL_T,
-	KEY_T,
 	LOFF_T_P,
-	LONG,
 	LONG_P,
-	MODE_T,
-	MQD_T,
-	NFDS_T,
-	OFF64_T,
-	OFF_T,
 	OFF_T_P,
-	PID_T,
-	SIGHANDLER_T,
 	SIGINFO_T_P,
 	SIGSET_T_P,
-	SIZE_T,
 	SIZE_T_P,
-	SOCKLEN_T,
 	SOCKLEN_T_P,
-	SSIZE_T,
 	STACK_T_P,
 	STRUCT_EPOLL_EVENT_P,
 	STRUCT_GETCPU_CACHE_P,
 	STRUCT_IOCB_P,
-	STRUCT_IOCB_PP,
 	STRUCT_IOVEC_P,
 	STRUCT_IO_EVENT_P,
 	STRUCT_ITIMERSPEC_P,
@@ -83,9 +58,7 @@ typedef enum type_e
 	STRUCT_STATFS_P,
 	STRUCT_STAT_P,
 	STRUCT_SYSINFO_P,
-	STRUCT_TIMESPEC,
 	STRUCT_TIMESPEC_P,
-	STRUCT_TIMEVAL,
 	STRUCT_TIMEVAL_P,
 	STRUCT_TIMEX_P,
 	STRUCT_TIMEZONE_P,
@@ -96,20 +69,50 @@ typedef enum type_e
 	STRUCT_UTSNAME_P,
 	STRUCT_VM86_STRUCT_P,
 	STRUCT___SYSCTL_ARGS_P,
-	TIMER_T,
 	TIMER_T_P,
-	TIME_T,
 	TIME_T_P,
-	U64,
-	UID_T,
 	UID_T_P,
-	UINT32_T,
 	UNION_NFSCTL_RES_P,
 	UNSIGNED_CHAR_P,
+	UNSIGNED_LONG_P,
+	VOID_P,
+	VOID_PP,
+	STRUCT_IOCB_PP, /* Pointer type END, 65 pointer types*/
+	AIO_CONTEXT_T,
+	CADDR_T,
+	CAP_USER_DATA_T,
+	CAP_USER_HEADER_T,
+	CLOCKID_T,
+	CLOCK_T,
+	DEV_T,
+	ENUM___PTRACE_REQUEST,
+	GID_T,
+	IDTYPE_T,
+	ID_T,
+	INT,
+	KEY_SERIAL_T,
+	KEY_T,
+	LONG,
+	MODE_T,
+	MQD_T,
+	NFDS_T,
+	OFF64_T,
+	OFF_T,
+	PID_T,
+	SIGHANDLER_T,
+	SIZE_T,
+	SOCKLEN_T,
+	SSIZE_T,
+	STRUCT_TIMESPEC,
+	STRUCT_TIMEVAL,
+	TIMER_T,
+	TIME_T,
+	U64,
+	UID_T,
+	UINT32_T,
 	UNSIGNED_FLAGS,
 	UNSIGNED_INT,
 	UNSIGNED_LONG,
-	UNSIGNED_LONG_P,
 	UNSIGNED_MSG_PRIO,
 	UNSIGNED_NR_EVENTS,
 	UNSIGNED_NSOPS,
@@ -117,9 +120,7 @@ typedef enum type_e
 	UNSIGNED_PMSG_PRIO,
 	UNSIGNED_PNODE,
 	VARARGS,
-	VOID,
-	VOID_P,
-	VOID_PP
+	VOID
 } type_t;
 
 /**
