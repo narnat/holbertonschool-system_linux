@@ -28,6 +28,7 @@ void factorize_even_numbers(list_t *list, unsigned long *n)
 
 /**
  * factorize - helper function to find prime factors of a number
+ * Implementing Newton's method to find the square root of a number
  * @list: linked list to store each prime factor
  * @n: number which needs to be factorized
  * Return: linked list where every nodes contains one prime factor of a number
@@ -41,7 +42,7 @@ list_t *factorize(list_t *list, unsigned long n)
 	factorize_even_numbers(list, &n);
 	x = n;
 	while (x * x > n)
-		x = (x + n / x) / 2;
+		x = (unsigned long)((x + n / x) / 2);
 	for (i = 3; i <= (unsigned long)x;)
 	{
 		if (n % i == 0)
