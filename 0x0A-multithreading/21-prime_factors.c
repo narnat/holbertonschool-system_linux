@@ -90,7 +90,7 @@ list_t *prime_factors(char const *s)
 	n = strtoul(s, &non_digit_ptr, 10);
 	if (errno == EINVAL || errno == ERANGE || !non_digit_ptr)
 		return (NULL);
-	list = calloc(sizeof(*list), 1);
+	list = calloc(1, sizeof(*list));
 	if (!list)
 		return (NULL);
 	if (!factorize(list, n))
