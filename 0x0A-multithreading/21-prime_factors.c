@@ -1,4 +1,3 @@
-#include <math.h>
 #include "list.h"
 #include "multithreading.h"
 
@@ -12,9 +11,9 @@ void factorize_even_numbers(list_t *list, unsigned long *n)
 {
 	unsigned long *m;
 
-	while (*n % 2 == 0)
+	while ((*n & 1) == 0)
 	{
-		*n /= 2;
+		*n >>= 1;
 		m = malloc(sizeof(*m));
 		if (!m)
 		{
@@ -43,31 +42,29 @@ list_t *factorize(list_t *list, unsigned long n)
 	x = n;
 	while (x * x > n)
 		x = (unsigned long)((x + n / x) / 2);
-	for (i = 3; i <= (unsigned long)x;)
+	for (i = 3; i <= (unsigned long)x; i += 2)
 	{
-		if (n % i == 0)
+		while (n % i == 0)
 		{
 			n /= i;
 			m = malloc(sizeof(*m));
-			if (!m)
-			{
-				list_destroy(list, free);
-				return (NULL);
-			}
+			/* if (!m) */
+			/* { */
+			/*	list_destroy(list, free); */
+			/*	return (NULL); */
+			/* } */
 			*m = i;
 			list_add(list, (void *)m);
 		}
-		else
-			i += 2;
 	}
-	if (n > 1)
+	if (n > 2)
 	{
 		m = malloc(sizeof(*m));
-		if (!m)
-		{
-			list_destroy(list, free);
-			return (NULL);
-		}
+		/* if (!m) */
+		/* { */
+		/*	list_destroy(list, free); */
+		/*	return (NULL); */
+		/* } */
 		*m = n;
 		list_add(list, (void *)m);
 	}

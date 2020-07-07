@@ -2,7 +2,12 @@
 #include "multithreading.h"
 #include <pthread.h>
 
-
+/**
+ * create_task - creates a task for thread pool
+ * @entry: entry function for the task
+ * @param: parameter for @entry fucntion
+ * Return: populated task struct
+*/
 task_t *create_task(task_entry_t entry, void *param)
 {
 	task_t *task;
@@ -21,6 +26,10 @@ task_t *create_task(task_entry_t entry, void *param)
 	return (task);
 }
 
+/**
+ * destroy_task - frees up task
+ * @task: task struct
+*/
 void destroy_task(task_t *task)
 {
 	list_destroy(task->result, free);
@@ -29,6 +38,11 @@ void destroy_task(task_t *task)
 	free(task);
 }
 
+/**
+ * exec_tasks - assigns a thread to a task
+ * @tasks: list of tasks
+ * Return: populated task struct
+*/
 void *exec_tasks(list_t const *tasks)
 {
 	node_t *root;
