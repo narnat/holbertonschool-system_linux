@@ -1,7 +1,10 @@
 #include "multithreading.h"
 
 /**
- * blur_pixel
+ * blur_pixel - blurs a pixel
+ * @portion: portion struct
+ * @pos_x: position of a pixel at X-axis
+ * @pos_y: position of a pixel at Y-axis
  */
 void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 {
@@ -36,6 +39,13 @@ void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 	portion->img_blur->pixels[portion->img->w * pos_y + pos_x].b = b_sum / k_sum;
 }
 
+/**
+ * check_edges - checks for out of bound errors
+ * @portion: portion struct
+ * @x: position of a pixel at X-axis
+ * @y: position of a pixel at Y-axis
+ * Return: 0 if out of bound, 1 otherwise
+*/
 int check_edges(blur_portion_t const *portion, size_t x, size_t y)
 {
 	size_t half_kernel = portion->kernel->size / 2;
@@ -46,7 +56,8 @@ int check_edges(blur_portion_t const *portion, size_t x, size_t y)
 }
 
 /**
- * blur_portion -
+ * blur_portion - blurs an image using gaussian blur
+ * @portion: portion of the image
  */
 void blur_portion(blur_portion_t const *portion)
 {
