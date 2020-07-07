@@ -36,6 +36,15 @@ void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 	portion->img_blur->pixels[portion->img->w * pos_y + pos_x].b = b_sum / k_sum;
 }
 
+int check_edges(blur_portion_t const *portion, size_t x, size_t y)
+{
+	size_t half_kernel = portion->kernel->size / 2;
+
+	if (x < half_kernel || y < half_kernel)
+		return (0);
+	return (1);
+}
+
 /**
  * blur_portion -
  */
@@ -49,7 +58,8 @@ void blur_portion(blur_portion_t const *portion)
 	while (y < portion->y + portion->h)
 	{
 		/* black(portion, portion->img->w * y + x); */
-		blur_pixel(portion, x, y);
+		if (check_edges(portion, x, y))
+			blur_pixel(portion, x, y);
 		++x;
 		if (x == portion->x + portion->w)
 		{
