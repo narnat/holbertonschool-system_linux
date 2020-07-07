@@ -92,7 +92,7 @@ int tracer(pid_t child, int argc, char *argv[], char *envp[])
 	retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
 	fprintf(stdout, "execve(\"%s\", [", argv[0]);
 	for (i = 0; i < argc; ++i)
-		printf("\"%s\"", argv[i]);
+		printf("%s\"%s\"", i == 0 ? "" : ", ", argv[i]);
 	for (i = 0; envp[i]; ++i)
 		;
 	printf("], [/* %d vars*/]) = %#lx\n", i, retval);
