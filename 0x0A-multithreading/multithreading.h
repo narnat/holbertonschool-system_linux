@@ -9,8 +9,10 @@
 #include <pthread.h>
 #include <stdarg.h>
 #include "list.h"
+#include <sys/sysinfo.h>
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define NUM_THREADS (get_nprocs() * 2)
 
 /**
  * struct pixel_s - RGB pixel
