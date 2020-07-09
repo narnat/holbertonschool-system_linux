@@ -52,12 +52,12 @@ void check_borders(blur_portion_t const *portion, size_t *start_x,
 void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 {
 	size_t start_x = pos_x, start_y = pos_y, end_x, end_y;
-	size_t x, y, k_x, k_y, kx_start, ky_start, kx_end;
+	size_t x, y, k_x, k_y, kx_start, ky_start;
 	float r_sum, g_sum, b_sum, k_sum = 0;
 
 	k_x = k_y = r_sum = g_sum = b_sum = 0;
 	check_borders(portion, &start_x, &start_y, &end_x,
-		      &end_y, &kx_start, &ky_start, &kx_end);
+		      &end_y, &kx_start, &ky_start);
 	x = start_x, y = start_y;
 	k_x = kx_start, k_y = ky_start;
 	while (y < end_y)
@@ -88,7 +88,6 @@ void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 void blur_portion(blur_portion_t const *portion)
 {
 	size_t x, y;
-	size_t count = 0;
 
 	x = portion->x;
 	y = portion->y;
