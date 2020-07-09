@@ -1,5 +1,6 @@
 #include "strace.h"
 #include "syscalls.h"
+#include <unistd.h>
 
 /**
  * wait_syscall - Waits for syscall invocation in subprocess
@@ -73,6 +74,28 @@ void print_register(struct user_regs_struct u_in, int idx, ulong reg,
 	}
 }
 
+void print_access_flgs(ulong rsi)
+{
+	int count = 0;
+
+	if (rsi & F_OK)
+	{
+		printf(", F_OK");
+		return;
+	}
+	if (rsi & R_OK)
+		count += printf(", R_OK");
+	if (rsi & W_OK)
+		count += printf("%sW_OK", count > 0 ? "|" : ", ");
+	if (rsi & X_OK)
+		count += printf("%sX_OK", count > 0 ? "|" : ", ");
+}
+
+void print_open_flgs(ulong rsi)
+{
+
+}
+
 /**
  * print_args - print arguments to syscalls
  * @u_in: registers struct
@@ -81,7 +104,12 @@ void print_register(struct user_regs_struct u_in, int idx, ulong reg,
 void print_args(struct user_regs_struct u_in, pid_t child_pid)
 {
 	print_register(u_in, 0, u_in.rdi, "", child_pid);
-	print_register(u_in, 1, u_in.rsi, ", ", child_pid);
+	if (syscalls_64_g[u_in.orig_rax].nr == 21)
+		print_access_flgs(u_in.rsi);
+	else if (syscalls_64_g[u_in.orig_rax].nr == 2)
+		print_open_flgs(u_in.rsi);
+	else
+		print_register(u_in, 1, u_in.rsi, ", ", child_pid);
 	print_register(u_in, 2, u_in.rdx, ", ", child_pid);
 	print_register(u_in, 3, u_in.r10, ", ", child_pid);
 	print_register(u_in, 4, u_in.r8, ", ", child_pid);
@@ -114,11 +142,10 @@ int tracer(pid_t child, int argc, char *argv[], char *envp[])
 	retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long) * RAX);
 	fprintf(stdout, "execve(\"%s\", [", argv[0]);
 	for (i = 0; i < argc; ++i)
-		printf("\"%s\"", argv[i]);
+		printf("%s\"%s\"", i == 0 ? "" : ", ", argv[i]);
 	for (i = 0; envp[i]; ++i)
 		;
-	printf("], [/* %d vars*/]) = %lu\n", i, retval);
-
+	printf("], [/* %d vars */]) = %#lx\n", i, retval);
 	while (1)
 	{
 		if (wait_syscall(child) != 0)

@@ -10,6 +10,8 @@
 #include <stdarg.h>
 #include "list.h"
 
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
 /**
  * struct pixel_s - RGB pixel
  *
