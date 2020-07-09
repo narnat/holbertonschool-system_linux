@@ -1,4 +1,6 @@
 #include "multithreading.h"
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
 
 /**
  * check_edges - checks for out of bound errors
@@ -17,44 +19,57 @@ void check_borders(blur_portion_t const *portion, size_t *start_x,
 	if (*start_x < half_kernel)
 	{
 		*kx_start = half_kernel - *start_x;
+		*end_x = half_kernel + *start_x + 1;
 		*start_x = 0;
+
+		*kx_end = portion->kernel->size;
 	}
 	else
 	{
 		*kx_start = 0;
 		*start_x = *start_x - half_kernel;
+
+		*end_x = MIN(*start_x + portion->kernel->size, portion->img->w);
+		*kx_end = *end_x - *start_x;
 	}
 	if (*start_y < half_kernel)
 	{
 		*ky_start = half_kernel - *start_y;
+		*end_y = half_kernel + *start_y + 1;
 		*start_y = 0;
+
 	}
 	else
 	{
 		*ky_start = 0;
 		*start_y = *start_y - half_kernel;
+		*end_y = MIN(*start_y + portion->kernel->size, portion->img->h);
 	}
 
 	/* Limit from end */
-	if (*start_x + portion->kernel->size >= portion->img->w)
-	{
-		*kx_end = portion->img->w - *start_x;
-		*end_x = portion->img->w;
-	}
-	else
-	{
-		*kx_end = portion->kernel->size;
-		*end_x = *start_x + portion->kernel->size;
-	}
+	/* if (*start_x + portion->kernel->size >= portion->img->w) */
+	/* { */
+	/* 	*kx_end = portion->img->w - *start_x; */
+	/* 	*end_x = portion->img->w; */
+	/* } */
+	/* else */
+	/* { */
+	/* 	*kx_end = portion->kernel->size; */
+	/* 	*end_x = *start_x + portion->kernel->size; */
+	/* } */
 
-	if (*start_y + portion->kernel->size >= portion->img->h)
-	{
-		*end_y = portion->img->h;
-	}
-	else
-	{
-		*end_y = *start_y + portion->kernel->size;
-	}
+	/* if (*start_y + portion->kernel->size >= portion->img->h) */
+	/* { */
+	/* 	*end_y = portion->img->h; */
+	/* } */
+	/* else */
+	/* { */
+	/* 	*end_y = *start_y + portion->kernel->size; */
+	/* } */
+	/* printf("\n\n**************************************************\n"); */
+	/* printf("Start X: %lu, Start Y: %lu\n", *start_x, *start_y); */
+	/* printf("End X: %lu, End Y: %lu\n", *end_x, *end_y); */
+	/* printf("Kernel start X: %lu, Kernel start Y: %lu, Kernel end X: %lu\n", *kx_start, *ky_start, *kx_end); */
 }
 
 /**
@@ -109,12 +124,14 @@ void blur_pixel(blur_portion_t const *portion, size_t pos_x, size_t pos_y)
 void blur_portion(blur_portion_t const *portion)
 {
 	size_t x, y;
+	size_t count = 0;
 
 	x = portion->x;
 	y = portion->y;
 
 	while (y < portion->y + portion->h)
 	{
+		/* printf("####################\nPixel Number: %lu\n", count); */
 		/* black(portion, portion->img->w * y + x); */
 		blur_pixel(portion, x, y);
 		++x;
@@ -123,6 +140,7 @@ void blur_portion(blur_portion_t const *portion)
 			x = portion->x;
 			++y;
 		}
-
+		++count;
 	}
+	/* printf("Num of pixels blurred %lu\n", count); */
 }
