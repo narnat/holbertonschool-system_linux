@@ -36,9 +36,9 @@ void print_string_table_idx(unsigned char *bytes, int class, int endianess)
 }
 
 /**
- * print_elf_header - Print all infor from elf header
- * @bytes: character array
- * @class: ELFCLASS32 or ELFCLASS64
+ * print_elf_header - Print all info from elf header
+ * @bytes: character array, where the header is stored
+ * @class: ELFCLASS32 or ELFCLASS64 (32 or 64 bit)
  * @endianess: LSB or MSB
  */
 void print_elf_header(unsigned char *bytes, int class, int endianess)
@@ -76,11 +76,7 @@ int main(int argc, char *argv[])
 	unsigned char bytes[64];
 
 	if (argc != 2)
-	{
-		/* fprintf(stderr, "readelf: Warning: Nothing to do.\n"); */
-		/* fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n"); */
 		return (EXIT_SUCCESS);
-	}
 	if (access(argv[1], F_OK) == -1)
 	{
 		fprintf(stderr, "readelf: Error: '%s': No such file\n", argv[1]);
@@ -99,9 +95,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 	if (check_elf(bytes))
-	{
 		return (EXIT_FAILURE);
-	}
 	print_elf_header(bytes,
 		     bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 		     bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
