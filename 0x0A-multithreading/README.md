@@ -8,7 +8,7 @@ Write a function that will serve as the entry point to a new thread.
     Prototype: void *thread_entry(void *arg);, where:
         arg holds the address of a string that must be printed and followed by a new line.
     Make sure to respect the order in which strings are printed out in the following example:
-
+```
 alex@~/0x0A-multithreading$ cat 0-main.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +40,7 @@ Holberton School
 Created thread ID -> 139851772159744
 C is fun
 alex@~/0x0A-multithreading$
-
+```
 Repo:
 
     GitHub repository: holbertonschool-system_linux
@@ -60,7 +60,7 @@ alex@~/0x0A-multithreading$ cat 1-main.c
 #include <stdlib.h>
 #include <pthread.h>
 #include "multithreading.h"
-
+```
 /**
  * _thread_entry - Thread entry point. Prints out a string
  *
@@ -98,7 +98,7 @@ alex@~/0x0A-multithreading$ ./1-tprintf
 [139794647717632] Hello from thread
 [139794656094016] Hello from main thread
 alex@~/0x0A-multithreading$
-
+```
 Repo:
 
     GitHub repository: holbertonschool-system_linux
@@ -112,7 +112,7 @@ Write a method that blurs a portion of an image using a Gaussian Blur.
 
     Prototype: void blur_portion(blur_portion_t const *portion);, where:
         portion points to a data structure described in the project requirements
-
+```
 alex@~/0x0A-multithreading$ cat 10-main.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -256,7 +256,7 @@ alex@~/0x0A-multithreading$ ./10-blur_portion images/car.pbm images/kernel_0.knl
 Image size -> 960 * 540
 Kernel size -> 5
 alex@~/0x0A-multithreading$
-
+```
 Here is the image used in the example, before and after execution:
 Original image 	Blured image
 
@@ -284,7 +284,7 @@ Write a method that blurs the entirety of an image using a Gaussian Blur.
     You are free to use as many threads as you want. Keep in mind that too many threads can make your program inefficient.
     You are free to divide the source image in portions of your choice.
     The main goal of this task is to demonstrate that using threads make the process faster.
-
+```
 alex@~/0x0A-multithreading$ cat 11-main.c
 #include <stdio.h>
 #include <pthread.h>
@@ -426,7 +426,7 @@ real    0m0.143s
 user    0m0.197s
 sys 0m0.076s
 alex@~/0x0A-multithreading$
-
+```
 Here is the image used in the example, before and after execution:
 Original image 	Blured image
 
@@ -450,7 +450,7 @@ This time, you will also have to use a mutex to avoid race conditions. As you kn
     Tip: You are allowed to use global variables
 
 NOTE: In the following example, we first compile with our first version of tprintf to show the consequence of the race condition.
-
+```
 alex@~/0x0A-multithreading$ cat 20-main.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -519,7 +519,7 @@ alex@~/0x0A-multithreading$ ./20-tprintf
 [140146801956608] Hello from thread
 [140146827134720] Hello from thread
 alex@~/0x0A-multithreading$
-
+```
 Repo:
 
     GitHub repository: holbertonschool-system_linux
@@ -538,7 +538,7 @@ Write a function that factorizes a number into a list of prime factors.
         list.h
         list.c
     NOTE: This task does not require multithreading, and will not be linked to the pthread library.
-
+```
 alex@~/0x0A-multithreading$ cat 21-main.c
 #include <stdlib.h>
 #include <stdio.h>
@@ -606,7 +606,7 @@ alex@~/0x0A-multithreading$ ./21-prime_factors 18446744073709551612 184467440737
 18446744073709551609 = 3 * 3 * 818923289 * 2502845209
 18446744073709551608 = 2 * 2 * 2 * 2305843009213693951
 alex@~/0x0A-multithreading$
-
+```
 Repo:
 
     GitHub repository: holbertonschool-system_linux
@@ -640,7 +640,7 @@ For this task, you will have to write 3 functions (all in the same file):
         You must use tprintf to print when a task is started, and completed
 
 Structures
-
+```
 typedef void *(*task_entry_t)(void *);
 
 /**
@@ -796,7 +796,7 @@ Executing 14 tasks on 8 threads
 324 = 2 * 2 * 3 * 3 * 3 * 3
 3453450 = 2 * 3 * 5 * 5 * 7 * 11 * 13 * 23
 alex@~/0x0A-multithreading$
-
+```
 Repo:
 
     GitHub repository: holbertonschool-system_linux
