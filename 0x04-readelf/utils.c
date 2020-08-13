@@ -2,6 +2,7 @@
 
 /**
  * reverse - Reverse char array, used to go from MSB -> LSB
+ * used to convert MSB -> LSB or vice versa
  * @bytes: character array
  * @size: size of @bytes
 */
@@ -61,7 +62,7 @@ int check_elf(unsigned char *bytes)
 }
 
 /**
- * get_section_header_off - Print section headers
+ * get_section_header_off - get section header offset
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
