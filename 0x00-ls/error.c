@@ -11,15 +11,13 @@ void free_arr(container_t *files, int size)
 	int files_i;
 
 	for (files_i = 0; files_i < size; files_i++)
-	{
 		free(files[files_i].name);
-	}
 	free(files);
 }
 
 /**
- * error - custom error function
- * @args: - arguments
+ * error - custom error function to ahdnle different error messages
+ * @args: - arguments, used to get the name of the executable and files names
  * Return: Void
  */
 void error(args_t *args)
