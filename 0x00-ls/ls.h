@@ -141,11 +141,12 @@ typedef struct queue_s
 	node_t *last;
 } queue_t;
 
-/* Queue functions functions */
+/* Queue functions */
 void en_queue(queue_t *queue, container_t dir);
 queue_t *create_queue();
 void free_queue(queue_t **queue);
 
+/* Main ls functionality */
 void ls(args_t *args);
 void error(args_t *args);
 void set_opts(args_t *args);
@@ -175,6 +176,8 @@ char *_strrchr(char *s, char c);
 
 int partition(container_t *arr, int low, int high,
 			  int (*cmp)(container_t *f1, container_t *f2));
+
+/* Sorting comparator functions */
 void quickSort(container_t *arr, int low, int high, size_t size,
 			   int (*cmp)(container_t *f1, container_t *f2));
 void swap(container_t *f1, container_t *f2);
@@ -192,4 +195,5 @@ char _tolower(char c);
 int _strcmp_case_insensitive(char *s1, char *s2);
 int _strcmp_case_sensitive(char *s1, char *s2);
 int _strncmp(const char *s1, const char *s2, size_t n);
+
 #endif /* LS_H */
