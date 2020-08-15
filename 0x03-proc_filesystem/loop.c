@@ -3,6 +3,12 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+/**
+* main - simple code which reads from heap infinitely
+* Used as auxiliary program to show how another process changes
+* data by manipulating proc filesystem
+* Return: 0 on success
+*/
 int main(void)
 {
 	char *str;

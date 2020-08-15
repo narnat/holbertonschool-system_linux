@@ -2,6 +2,7 @@
 
 /**
  * reverse - Reverse char array, used to go from MSB -> LSB
+ * used to convert MSB -> LSB or vice versa
  * @bytes: character array
  * @size: size of @bytes
 */
@@ -32,10 +33,7 @@ int read_elf_header_bytes(unsigned char *bytes, const char *filename)
 
 	fp = fopen(filename, "rb");
 	if (!fp || fread(bytes, 64, 1, fp) == 0)
-	{
 		return (1);
-	}
-
 	fclose(fp);
 	return (0);
 }
@@ -50,7 +48,6 @@ int check_elf(unsigned char *bytes)
 	Elf64_Ehdr *header64;
 
 	header64 = (Elf64_Ehdr *) bytes;
-
 	if (memcmp(header64->e_ident, ELFMAG, SELFMAG) != 0)
 	{
 		fprintf(stderr,  "readelf: Error: Not an ELF file - it has");
@@ -61,7 +58,7 @@ int check_elf(unsigned char *bytes)
 }
 
 /**
- * get_section_header_off - Print section headers
+ * get_section_header_off - get section header offset
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
@@ -75,7 +72,6 @@ void *get_section_header_off(unsigned char *bytes, int class, int endianess)
 
 	if (endianess == ELFDATA2MSB)
 		reverse((unsigned char *) header_off, class == ELFCLASS32 ? 4 : 8);
-
 	return (header_off);
 }
 
@@ -94,6 +90,5 @@ Elf64_Off get_section_off(unsigned char *bytes, int class, int endianess)
 
 	if (endianess == ELFDATA2MSB)
 		reverse((unsigned char *) &off, class == ELFCLASS32 ? 4 : 8);
-
 	return (off);
 }

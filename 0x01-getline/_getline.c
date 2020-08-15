@@ -7,10 +7,8 @@ static int failure;
  * @s: string
  * @c: character
  * @len: the length of @s
- *
  * Return: returns a pointer
  */
-
 char *_strchr(char *s, char c, size_t len)
 {
 	size_t i = 0;
@@ -24,7 +22,7 @@ char *_strchr(char *s, char c, size_t len)
 }
 
 /**
- * get_fd - get id of the car
+ * get_fd - get id of a car
  * @head: linked list of cars
  * @fd: the id to look for
  * Return: the node with given @id or NULL
@@ -50,7 +48,6 @@ descriptor_t *get_fd(descriptor_t **head, int fd)
 	node->next = NULL;
 	memset(node->buf, 0, READ_SIZE);
 	node->pos = 0;
-	/* read(node->fd, node->buf, READ_SIZE); */
 	if (!*head)
 		*head = node;
 	else
@@ -59,14 +56,13 @@ descriptor_t *get_fd(descriptor_t **head, int fd)
 }
 
 /**
- * _realloc - realloc() implementation
+ * _realloc - realloc() implementation, but different prototype
  * @ptr: pointer to the memory
  * @old_size: old size of the block of memory
  * @new_size: new size of the block of memory
- *
- * Return: void
+ * Return: new allocated memory block with data copied from previous location
+ * NULL on failure
  */
-
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
 	char *s, *a;
@@ -99,7 +95,8 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 
 
 /**
- * read_descriptor - read function
+ * flush_buffer - clean up the buffer
+ * Cleans the buffer if size exceeds the buffer size
  * @line: the line
  * @pos: pos in the @line
  * @size: size of line
@@ -183,7 +180,6 @@ char *read_descriptor(descriptor_t *desc)
  */
 char *_getline(const int fd)
 {
-	/* static descriptor_t list = {-1, {0}, 0, NULL}; */
 	static descriptor_t *list;
 	descriptor_t *cur = NULL, *tmp;
 

@@ -1,7 +1,8 @@
 #include "_elf.h"
 
 /**
- * print_section_header_loop - Print info about section headers, loop part
+ * print_section_header_loop - Print info about section headers
+ * reads each section in a loop
  * @bytes: character array
  * @class: ELFCLASS32 or ELFCLASS64
  * @endianess: LSB or MSB
@@ -38,7 +39,7 @@ void print_section_header_loop(unsigned char *bytes, int class, int endianess,
  * print_section_headers - Print info about section headers, like readelf -S -W
  * @bytes: character array
  * @filename: elf file
- * @class: ELFCLASS32 or ELFCLASS64
+ * @class: ELFCLASS32 or ELFCLASS64 (32 or 64 bit)
  * @endianess: LSB or MSB
  */
 void print_section_header(unsigned char *bytes, char *filename, int class,
@@ -76,7 +77,8 @@ void print_section_header(unsigned char *bytes, char *filename, int class,
 }
 
 /**
- * main - Entry point, output is similar to readelf -S -h
+ * main - Entry point, output is similar to readelf -S -W
+ * prints section header
  * @argc: argument count
  * @argv: argument vector
  * Return: 0 on success, 1 otherwise
@@ -86,11 +88,7 @@ int main(int argc, char *argv[])
 	unsigned char bytes[64];
 
 	if (argc != 2)
-	{
-		/* fprintf(stderr, "readelf: Warning: Nothing to do.\n"); */
-		/* fprintf(stderr, "Usage: readelf <option(s)> elf-file(s)\n"); */
 		return (EXIT_SUCCESS);
-	}
 	if (access(argv[1], F_OK) == -1)
 	{
 		fprintf(stderr, "readelf: Error: '%s': No such file\n", argv[1]);
@@ -109,9 +107,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 	if (check_elf(bytes))
-	{
 		return (EXIT_FAILURE);
-	}
 	print_section_header(bytes, argv[1],
 			 bytes[4] == ELFCLASS32 ? ELFCLASS32 : ELFCLASS64,
 			 bytes[5] == ELFDATA2MSB ? ELFDATA2MSB : ELFDATA2LSB);
