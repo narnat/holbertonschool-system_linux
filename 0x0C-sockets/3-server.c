@@ -38,7 +38,7 @@ int main(void)
 
 	if (recv(new_sck, buf, 1024, 0) < 0)
 		return (EXIT_FAILURE);
-	printf("Message recieved: \"%s\"\n", buf);
+	printf("Message received: \"%s\"\n", buf);
 	close(sck);
 	close(new_sck);
 	return (0);
