@@ -14,7 +14,7 @@ int main(void)
 	sck = socket(AF_INET, SOCK_STREAM, 0);
 	if (sck == -1)
 		return (EXIT_FAILURE);
-
+	setbuf(stdout, NULL);
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(PORT);
