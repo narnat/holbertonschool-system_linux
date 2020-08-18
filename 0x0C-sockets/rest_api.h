@@ -9,4 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#define PORT 8080
+#define BACKLOG 10
+
 #endif  /* __REST_API_H_ */
