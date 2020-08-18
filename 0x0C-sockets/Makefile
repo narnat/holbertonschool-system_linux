@@ -13,10 +13,10 @@ TASK2 = free
 TASK3 = calloc
 TASK4 = realloc
 
-$(TASK1): $(TASK1).c rest_api.h
+$(TASK1): $(TASK1).c rest_api.h rest_api.c
 	$(CC) $(CFLAGS) -o $@  $^
 
-$(TASK0): $(TASK0).c rest_api.h
+$(TASK0): $(TASK0).c rest_api.h rest_api.c
 	$(CC) $(CFLAGS) -o $@  $^
 
 .PHONY: clean, check, run

@@ -12,4 +12,7 @@
 #define PORT 8080
 #define BACKLOG 10
 
+int init_inet_socket(void);
+int print_raw_req(char *header, int sck);
+
 #endif  /* __REST_API_H_ */
