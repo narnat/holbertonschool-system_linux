@@ -11,7 +11,10 @@ TASK0 = todo_api_0
 TASK1 = todo_api_1
 TASK2 = todo_api_2
 TASK3 = todo_api_3
-TASK4 = realloc
+TASK4 = todo_api_4
+
+$(TASK4): $(TASK4).c rest_api.h rest_api.c rest_api_2.c queue.c list.c
+	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK3): $(TASK3).c rest_api.h rest_api.c
 	$(CC) $(CFLAGS) -o $@  $^
