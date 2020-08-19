@@ -43,5 +43,6 @@ queue_t *create_queue(void);
 void en_queue(queue_t *queue, char *title, char *desc);
 void free_queue(queue_t **q);
 todo_list *find_by_id(queue_t *queue, size_t id);
+int delete_by_id(queue_t *queue, size_t id);
 
 #endif /* DATA_STRUCTURES_H */
