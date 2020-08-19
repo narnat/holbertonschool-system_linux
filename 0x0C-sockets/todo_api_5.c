@@ -9,14 +9,14 @@
 int send_all_todos(int sck, queue_t *queue)
 {
 	size_t bytes = 0, size;
-	char buf[10 * JSON_SIZE];
+	char buf[10 * BUFSIZ];
 	todo_list *node;
 
 	size = queue->size;
 	node = queue->first;
 	while (node)
 	{
-		serialize(buf + bytes, 10 * JSON_SIZE - bytes, node);
+		serialize(buf + bytes, 10 * BUFSIZ - bytes, node);
 		bytes += strlen(buf + bytes);
 		node = node->next;
 		--size;
@@ -48,7 +48,7 @@ int parser(char *header, int sck, queue_t *queue)
 	int bytes;
 
 	bytes = sscanf(header, "%s %s", method, path);
-	if (!strcasecmp(method, "GET"))
+	if (!strcasecmp(method, "GET") && !strcmp(path, "/todos"))
 		return (send_all_todos(sck, queue));
 	if (strcasecmp(method, "POST") || bytes == EOF)
 	{
