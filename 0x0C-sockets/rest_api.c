@@ -7,7 +7,7 @@
 */
 int init_inet_socket(void)
 {
-	int sck;
+	int sck, yes = 1;
 	struct sockaddr_in addr;
 
 	sck = socket(AF_INET, SOCK_STREAM, 0);
@@ -17,8 +17,16 @@ int init_inet_socket(void)
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(PORT);
 	if (bind(sck, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+	{
+		perror("bind");
 		return (-1);
+	}
 	listen(sck, BACKLOG);
+	if (setsockopt(sck, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1)
+	{
+		perror("setsockopt");
+		return (-1);
+	}
 	printf("Server listening on port %d\n", PORT);
 	return (sck);
 }
