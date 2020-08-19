@@ -22,6 +22,10 @@ void send_err(int sck, int err_code);
 int get_queries(int sck, char *body, char **title, char **desc);
 void serialize(char *buf, size_t size, todo_list *node);
 void send_created(int sck, queue_t *queue);
+int send_all_todos(int sck, queue_t *queue);
+int send_todo_id(int sck, queue_t *queue, size_t id);
+int handle_post_req(int sck, char *header, queue_t *queue);
+
 
 
 #endif  /* __REST_API_H_ */

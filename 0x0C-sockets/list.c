@@ -35,3 +35,21 @@ int delete_nodeint_at_index(todo_list **head, unsigned int index)
 	free(forward);
 	return (1);
 }
+
+/**
+ * find_by_id - find a todo by id
+ * @queue: queue of todos
+ * @id: id of a todo
+ * Return: todo with matching @id or NULL
+ */
+todo_list *find_by_id(queue_t *queue, size_t id)
+{
+	todo_list *node;
+
+	if (!queue || !queue->size)
+		return (NULL);
+	node = queue->first;
+	while (node && node->id != id)
+		node = node->next;
+	return (node);
+}

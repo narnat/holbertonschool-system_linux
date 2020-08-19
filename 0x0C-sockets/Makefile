@@ -13,6 +13,10 @@ TASK2 = todo_api_2
 TASK3 = todo_api_3
 TASK4 = todo_api_4
 TASK5 = todo_api_5
+TASK6 = todo_api_6
+
+$(TASK6): $(TASK6).c rest_api.h rest_api.c rest_api_2.c queue.c list.c
+	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK5): $(TASK5).c rest_api.h rest_api.c rest_api_2.c queue.c list.c
 	$(CC) $(CFLAGS) -o $@  $^
