@@ -9,9 +9,12 @@ CFLAGS = -Wall -Werror -Wextra -pedantic -ggdb3
 
 TASK0 = todo_api_0
 TASK1 = todo_api_1
-TASK2 = free
+TASK2 = todo_api_2
 TASK3 = calloc
 TASK4 = realloc
+
+$(TASK2): $(TASK2).c rest_api.h rest_api.c
+	$(CC) $(CFLAGS) -o $@  $^
 
 $(TASK1): $(TASK1).c rest_api.h rest_api.c
 	$(CC) $(CFLAGS) -o $@  $^
