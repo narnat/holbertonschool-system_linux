@@ -1,26 +1,35 @@
 #include "rest_api.h"
 
 /**
- * print_headers - print HTTP queries
+ * print_body_params - print HTTP body params
  * @header: header where queries are stored
 */
-void print_headers(char *header)
+void print_body_params(char *header)
 {
-	char *tk, *p1;
+	char *tk, *path, *p1;
+	char *delim = "?=&";
 
-	tk = strtok(header, "\r\n");
-	if (!tk)
+	path = strchr(header, ' ');
+	if (!path)
 		return;
-	while ((tk = strtok(NULL, "\r\n")))
+	++path;
+	p1 = strchr(path, ' ');
+	if (!p1)
+		return;
+	*p1 = '\0';
+	printf("Path: %s\n", path);
+	path = strstr(++p1, "\r\n\r\n");
+	path += 4;
+	tk = strtok(path, delim);
+	while (tk)
 	{
-		p1 = strchr(tk, ':');
-		if (!p1)
+		if (!tk)
 			return;
-		*p1 = '\0';
-		p1 += 2;
-		printf("Header: ");
+		printf("Body param: ");
 		printf("\"%s\" -> ", tk);
-		printf("\"%s\"\n", p1);
+		tk = strtok(NULL, delim);
+		printf("\"%s\"\n", tk);
+		tk = strtok(NULL, delim);
 	}
 }
 
@@ -48,7 +57,7 @@ int accept_connection(int sck)
 			close(sck);
 			return (-1);
 		}
-		print_headers(header);
+		print_body_params(header);
 		dprintf(new_sck, "HTTP/1.0 200 OK\r\n\r\n");
 		close(new_sck);
 	}
